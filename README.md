@@ -1,3 +1,3 @@
 # danielchg.github.io
 
-This repository hold my personal blog based on Hugo and hosts in Github Pages.
+This repository contains my personal blog based on Hugo and hosted on Github Pages.
