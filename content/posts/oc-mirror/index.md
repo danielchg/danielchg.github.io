@@ -6,6 +6,11 @@ tags: [devops,openshift]
 draft: true
 ---
 
+# Table of Content
+
+1. [Context](#context)
+2. [OC Mirror plugin](#oc-mirror-plugin)
+
 ## Context
 
 At the moment of this writing I'm working in the Telco 5G area at Red Hat, where we works mostly with bare metal  deployments of OpenShift. These deployments are focused on clusters that will be placed in remote locations whith no Internet access due to security constrains and/or infrastructure designs.

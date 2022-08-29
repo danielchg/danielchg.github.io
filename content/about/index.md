@@ -6,9 +6,9 @@ draft: false
 ## Sumary
 ---
 
-> I’m an open source enthusiast with more than 20 years of experience working with Linux. In the last years I have been focusing on Cloud Computing (AWS, GCP, Azure), DevOps, MLOps (DevOps for Artificial Intelligence) and Kubernetes. Also I'm  coding a bit with Golang.
-> 
-> In this blog I will publish technical articles regarding Open Source, Linux, Kubernets, Cloud Computing, Edge, DevOps, MLOps, SecDevOps, GitOps.. whatever OPS! ;p 
+> I’m an open source enthusiast with more than 20 years of experience working with Linux. In the last years I have been focusing on Kubernetes, Cloud Computing (AWS, GCP, Azure), DevOps, MLOps (DevOps for Artificial Intelligence) and SecDevOps. Also I'm  coding a bit with Golang.
+>
+> In this blog I will publish technical articles regarding Open Source, Linux, Kubernetes, Cloud Computing, Edge, DevOps, MLOps, SecDevOps, GitOps.. whatever OPS! ;p
 >
 
 ## Experience
@@ -21,7 +21,7 @@ draft: false
 
 ### Intelygenz S.A.  
 > ##### DevOps for A.I. (June 2018 - July 2021) Madrid (SPAIN)
-> 
+>
 > Intelygenz started an area of A.I. and they needed someone to help with
 > the infrastructure in order to allow the Data Scientists training the
 > models and also run them in production. I used all my knowledge related
