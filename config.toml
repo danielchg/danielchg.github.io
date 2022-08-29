@@ -2,17 +2,27 @@ baseURL = 'https://danielchg.github.io/'
 languageCode = 'en-us'
 title = 'Daniel Ops'
 theme = "m10c"
+
 [params]
   author = 'Daniel Chavero Gaspar'
   description = 'A blog about whatever OPS!!'
   avatar = 'login-pic.jpg'
   menu_item_separator = '|'
 
+[taxonomies]
+   tag = "tags"
+   category = "categories"
+
 [[menu.main]]
   identifier = "posts"
   name = "Posts"
   url = "/posts/"
   weight = 100
+
+[[menu.main]]
+  identifier = "tags"
+  name = "Tags"
+  url = "/tags/"
 
 [[menu.main]]
   identifier = "about me"
