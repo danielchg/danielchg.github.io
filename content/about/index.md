@@ -8,8 +8,8 @@ draft: false
 
 > I’m an open source enthusiast with more than 20 years of experience working with Linux. In the last years I have been focusing on Kubernetes, Cloud Computing (AWS, GCP, Azure), DevOps, MLOps (DevOps for Artificial Intelligence) and SecDevOps. Also I'm  coding a bit with Golang.
 >
-> In this blog I will publish technical articles regarding Open Source, Linux, Kubernetes, Cloud Computing, Edge, DevOps, MLOps, SecDevOps, GitOps.. whatever OPS! ;p
->
+> In this blog I will publish technical articles regarding Open Source, Linux, Kubernetes, Cloud Computing, Edge, DevOps, MLOps, SecDevOps, GitOps.. whatever OPS!! All the content and opinions in here are my own.
+
 
 ## Experience
 ---
@@ -74,12 +74,3 @@ draft: false
 * **ACTC** Apple Certified Technical Coordinator MacOSX 10.7 Lion (2012)
 * **ITIL V3** ITIL V3 Foundations (2011)
 * **NETASQ**NETASQ Administrator Version 8.0 (2010)
-
-## Education
----
-
-* **Higher Technical Certificate in Electronic Products Development** 
-> (1997 - 1999) At High School Salvador Ayende, Fuenlabrada, MADRID (Spain)
-
-* **BUP, COU (old spanish system)** 
-> (1992 - 1997) At High School La Serna, Fuenlabrada, MADRID (Spain)
