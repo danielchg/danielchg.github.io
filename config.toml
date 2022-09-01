@@ -23,12 +23,13 @@ theme = "m10c"
   identifier = "tags"
   name = "Tags"
   url = "/tags/"
+  weight = 200
 
 [[menu.main]]
   identifier = "about me"
   name = "About Me"
   url = "/about/"
-  weight = 200
+  weight = 300
 
 [[params.social]]
   icon = 'twitter'
