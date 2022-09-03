@@ -3,6 +3,7 @@ title: "About Me"
 draft: false
 ---
 
+![Header](/vintage-dc.jpg)
 ## Sumary
 ---
 
