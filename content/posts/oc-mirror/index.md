@@ -328,7 +328,7 @@ How to use these ICSPs objects depend of the status of your cluster, if you are 
 
 ## Conclusions
 
-Currently there are a lot of use cases where a disconnected installation of an OCP cluster is required, and it is important that the procedure to create and maintain a disconnecte registry should be as easier as posible. With this new `oc-mirror` plugin the whole procedure has been simplify and also there are multimple improvements like the inrcremental download on each run vs the full download with the previous approach. Moreover, nowadays with DevOps culture and GitOps methodology it is good to have a way to keep tracking in a Git reposotory all the changes and track with a CI/CD tool the runs to create and/or maintain the Disconnected Registry. I think it is a worthy tool that helps a lot for production environments.
+Currently there are a lot of use cases where a disconnected installation of an OCP cluster is required, and it is important that the procedure to create and maintain a disconnected registry should be as easier as posible. With this new `oc-mirror` plugin the whole procedure has been simplify and also there are multimple improvements like the inrcremental download on each run vs the full download with the previous approach. Moreover, nowadays with DevOps culture and GitOps methodology, it is good to have a way to keep tracking in a Git reposotory of all the changes and track with a CI/CD tool the runs to create and/or maintain the Disconnected Registry. I think it is a worthy tool that helps a lot for production environments.
 
 ## Links
 
