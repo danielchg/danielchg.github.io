@@ -3,7 +3,7 @@ title: "Create an OCP and OLM mirror with oc-mirror plugin"
 toc: true
 date: 2022-08-29T17:44:18+02:00
 tags: [devops,openshift]
-draft: true
+draft: false
 ---
 
 # Table of Content
