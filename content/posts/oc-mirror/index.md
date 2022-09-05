@@ -42,7 +42,7 @@ If you are interested in the source code of `oc-mirror` plugin you can find it i
 
 ### Install
 
-The `oc-mirror` plugin is writen in Golang, hence this is just a binary that you can download to your machine, copy it to some place in your `$PATH` and add execution permissions. It can be downloaded from the [offical OCP release site](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/4.11.2/).
+The `oc-mirror` plugin is written in Golang, hence this is just a binary that you can download to your machine, copy it to someplace in your `$PATH`, and add execution permissions to it. It can be downloaded from the [offical OCP release site](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/4.11.2/).
 
 ```bash
 curl https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/4.11.2/oc-mirror.tar.gz -o oc-mirror.tgz
@@ -60,6 +60,7 @@ You can check if everything works properly showing the version.
 $ oc-mirror version
 Client Version: version.Info{Major:"", Minor:"", GitVersion:"4.11.0-202208031306.p0.g3c1c80c.assembly.stream-3c1c80c", GitCommit:"3c1c80ca6a5a22b5826c88897e7a9e5acd7c1a96", GitTreeState:"clean", BuildDate:"2022-08-03T14:23:35Z", GoVersion:"go1.18.4", Compiler:"gc", Platform:"linux/amd64"}
 ```
+In this article we are going to use directly the `oc-mirror` command, but if you have installed the `oc` CLI and the `oc-mirror` plugin is in any place whithin your `$PATH` you can use it like `oc mirror`.
 
 ### Configure
 
@@ -110,11 +111,11 @@ In the example above it is configured to create a mirror of the whole **OCP 4.11
 
 ## Create a mirror
 
-When you are going to create a mirror to deploy a disconnected environment there are different ways to do it. The best way for you depend of the your usecase. 
+When you are going to create a mirror to deploy a disconnected environment there are different ways to do it. The best way for you depend on your use case. 
 
-- **Partially Disconnected:** You can create a mirror directly from the public Quay.io to your disconnected registry, what is faster because you only need one step to create the mirror. 
+- **Partially Disconnected:** You can create a mirror directly from the public registries to your disconnected registry, what is faster than the other approach, because you only need one step to create the mirror. 
 
-- **Fully Disconnected:** If you have a very restrict network, and the servers where the cluster is going to be deployed don't have Internet access, you can create in a first step a mirror to a file, and later on copy this file to the place where the disconnected registry is. This last case is what I'm going to descrebe in this article. I think that is the most complex use case and maybe more use full to have a better understanding about how this procedure works.
+- **Fully Disconnected:** Suppose you have a very restricted network, and the servers where the cluster is going to be deployed don't have Internet access. In that case, you can create a mirror to a file, and later on, copy this file to the place with access to the disconnected registry, to import the images in it.
 
 Below in the diagram are shown the steps needed to create a Fully Disconnected mirror.
 
@@ -138,9 +139,7 @@ cat pull-secrets.txt | jq > $XDG_RUNTIME_DIR/containers/auth.json
 
 ### Deploy disconnected registry
 
-In order to follow this tutorial it is required a running registry where we are going to push all the mirror images. Just for testing purpose I have deployed it with [this script](https://github.com/danielchg/oc-mirror-procedure/blob/main/deploy_registry.sh). There are multiples ways to deploy a registry, for instance Red Had has a light version of Quay.io for this purpose, that is documented [in here](https://docs.openshift.com/container-platform/4.11/installing/disconnected_install/installing-mirroring-creating-registry.html).
-
-You can follow the below commands if you are running this on RHEL or Fedora. 
+It is required a running registry where we are going to push all the mirror images. Just for testing purpose I have deployed it with [this script](https://github.com/danielchg/oc-mirror-procedure/blob/main/deploy_registry.sh). There are multiples ways to deploy a registry, for instance Red Had has a light version of Quay.io for this purpose, that is documented [in here](https://docs.openshift.com/container-platform/4.11/installing/disconnected_install/installing-mirroring-creating-registry.html).
 
 ```bash
 git clone https://github.com/danielchg/oc-mirror-procedure.git
@@ -148,7 +147,7 @@ cd oc-mirror-procedure/
 ./deploy_registry.sh
 ```
 
-This script will deploy a registry that will listen on port `5000/TCP`, with TLS support and authentication with credentials `dummy/dummy`. In order to check the installation follow the below commands, be aware that an entry is added to the `/etc/hosts` due to the use of TLS. For this tutorial we are going to use the same machine for what is called Workstatin, Installer Machine and Disconnected Registry in the diagram above, but in a real scenario these should be different hosts.
+This script will deploy a registry that will listen on port `5000/TCP`, with TLS support and authentication with credentials `dummy/dummy`. In order to check the installation follow the below commands, be aware that an entry is added to the `/etc/hosts` due to the use of TLS. For this tutorial we are going to use the same machine for what is called **Workstatin**, **Installer Machine** and **Disconnected Registry** in the diagram above, but in a real scenario these should be different hosts.
 
 ```bash
 # Check if the container with the registry is running
@@ -169,19 +168,12 @@ Login Succeeded!
 
 ### Create mirror to file
 
-At this moment we should have in our Fedora machine the `oc-mirror` installed, and a disconnected registry running. The next step is to create a mirror from Quay.io to a file. We are going to use the file generated by the `oc-mirror init` command that we have run before. Be aware that we required an account with permission to pull the OCP container images from registry.redhat.io, if you don't have already an account, please visit the [Red Hat site](https://sso.redhat.com/auth/realms/redhat-external/login-actions/registration?client_id=rh_product_trials&tab_id=1Ks3qWXNdKY) in order to create it. 
+At this moment we should have in our machine the `oc-mirror` installed, and a disconnected registry. The next step is to create a mirror from the registry to a file. We are going to use the file generated by the `oc-mirror init` command run previously.  
 
 ```bash
-$ podman login registry.redhat.io
-Username: dchavero
-Password: 
-Login Succeeded!
-```
-Once you have loged in registry.redhat.io we can run the `oc-mirror` command.
+$ cd ~/oc-mirror-demo
 
-```bash
-cd ~/oc-mirror-demo
-/usr/sbin/oc-mirror --config imagesetconfig.yaml file:///root/oc-mirror-demo/archives
+$ /usr/sbin/oc-mirror --config imagesetconfig.yaml file:///root/oc-mirror-demo/archives
 Creating directory: /root/oc-mirror-demo/archives/oc-mirror-workspace/src/publish
 Creating directory: /root/oc-mirror-demo/archives/oc-mirror-workspace/src/v2
 Creating directory: /root/oc-mirror-demo/archives/oc-mirror-workspace/src/charts
@@ -199,9 +191,9 @@ info: Mirroring completed in 2m25.38s (130.8MB/s)
 Creating archive /root/oc-mirror-demo/archives/mirror_seq1_000000.tar
 ```
 
-The output should be something similar to the above, only the first and last lines are shown, the rest has been ommited due to de ammount of lines.
+The output should be something similar to the above, only the first and last lines are shown, and the rest has been omitted due to the number of lines..
 
-As you can see in the last line of the log the path to the file with the mirror is `/root/oc-mirror-demo/archives/mirror_seq1_000000.tar`, hence this is the file that we need to copy to the restricted location whith access to the disconnected registry. The that you copy this file to that place depend of your use case and your security requirements, the only important thing is to copy it to that place.
+As you can see in the last line of the log, the path to the file with the mirror is `/root/oc-mirror-demo/archives/mirror_seq1_000000.tar`. This is the file that we need to copy to the restricted location. The way that you copy this file to that place depends on your use case and your security requirements, the only important thing is to copy it to that place.
 
 The directory structure after the execution should be something like below.
 
@@ -219,9 +211,9 @@ Also there are a log file `.oc-mirror.log` where is saved all the output.
 
 ### Create mirror from file to registry
 
-In my lab I'm going to run this part of the procedure in the same machine, but in a real production environment you should copy the generated file `mirror_seq1_000000.tar` to the Installer Machine, from where the below command should be run to import the images in the Disconnected Registry. I know that I already told about this, but it is important that these aspects of the lab vs production are clear for a better understanding.
+In my lab I'm going to run this part of the procedure in the same machine, but in a real production environment you should copy the generated file `mirror_seq1_000000.tar` to the **Installer Machine**, from where the below command should be run to import the images in the **Disconnected Registry**. I know that I already told that, but it is important that these aspects of the lab vs production are clear for a better understanding.
 
-In order to import the images from the mirror file to our Disconnected Registry we just need to run the below command from the same folder as the before step, but actually you only need access to the `mirror_seq1_000000.tar` for this step, the rest of the content of the folder are important for future runs to create the mirror to file.
+In order to import the images from the mirror file to our Disconnected Registry we just need to run the below command from the same folder as the before steps. For this step you only need access to the `mirror_seq1_000000.tar` file.
 
 ```bash
 $ /usr/sbin/oc-mirror --from ./archives/mirror_seq1_000000.tar docker://registry.local:5000/oc-mirror --dest-skip-tls
@@ -264,7 +256,7 @@ Writing ICSP manifests to oc-mirror-workspace/results-1662308847
 
 As the previous run I have caputured only part of the output of the command, the first part just to show what is expected to see at the  beggining, and the end of the log, because in here there are important information that we have to use for the next steps.
 
-At this point should see something like below in our folder.
+At this point you should have something like below.
 
 ```bash
 $ tree .
@@ -291,7 +283,7 @@ As you can see there are new files within `oc-mirror-workspace/results-166230884
 
 ### ImageContentSourcePolicies objects
 
-That's awesome! We already have our **Disconnected Registry** with all the images to required to deploy our cluster in a restricted network. But how I install my cluster using these images instead of the public images that the `openshift-installer` normally use? That's a great question, and this is the reason why exist the objects **ImageContentSourcePolicies**. These object create a mapping between the public registries and our disconnected registry, in order to modify the CRI-O configuration to pull all the needed images from our Disconnected Registry instead of the Internet registry. Let's take a look to the content of one of this files for better understanding.
+That's awesome! We already have our **Disconnected Registry** with all the images required to deploy our cluster in a restricted environment. But how can I install my cluster using these images instead of the public images that the `openshift-installer` normally use? That's a great question, and this is the reason why exist the object **ImageContentSourcePolicy**. This object create a mapping between the public repository and our disconnected registry, in order to modify the CRI-O configuration to pull all the needed images from our **Disconnected Registry** instead of the Internet registry. Let's take a look to the content of one of this files for better understanding.
 
 ```bash
 $ cat oc-mirror-workspace/results-1662308847/imageContentSourcePolicy.yaml 
@@ -322,13 +314,13 @@ Storing signatures
 343496049fae3aadfc5c63064bbae33bce2e1511fa7b1a9522dca3cd9c318f6b
 ```
 
-It is important to be aware that the content of the `ImageContentSourcePolicy` make reference only to the registry repository no to the container image. As you can see in the command above the image that we try to pull is `registry.local:5000/oc-mirror/ubi8/ubi:latest` not just `registry.local:5000/oc-mirror/ubi8`.
+It is important to be aware that the content of the `ImageContentSourcePolicy` make reference only to the repository no to the container image. As you can see in the command above the image that we try to pull is `registry.local:5000/oc-mirror/ubi8/ubi:latest` not just `registry.local:5000/oc-mirror/ubi8`.
 
-How to use these ICSPs objects depend of the status of your cluster, if you are going to start an OCP installation from scratch, there are a section in the `install-config.yaml` to add these configs, and if you have a cluster already running and you just need to update the ICSPs objects just apply this YAML files with `oc apply -f`.
+How to use these ICSPs objects depends on the status of your cluster, if you are going to start an OCP installation from scratch, there are a section in the `install-config.yaml` to add these configs, if you have a cluster already running and you just need to update the ICSPs objects, then apply this YAML files with `oc apply -f`.
 
 ## Conclusions
 
-Currently there are a lot of use cases where a disconnected installation of an OCP cluster is required, and it is important that the procedure to create and maintain a disconnected registry should be as easier as posible. With this new `oc-mirror` plugin the whole procedure has been simplify and also there are multimple improvements like the inrcremental download on each run vs the full download with the previous approach. Moreover, nowadays with DevOps culture and GitOps methodology, it is good to have a way to keep tracking in a Git reposotory of all the changes and track with a CI/CD tool the runs to create and/or maintain the Disconnected Registry. I think it is a worthy tool that helps a lot for production environments.
+Currently, there are a lot of use cases where a disconnected installation of an OCP cluster is required, and the procedure to create and maintain a disconnected registry must be as easier as possible. With this new oc-mirror plugin the whole procedure has been simplified and also there are multiple improvements like the incremental download on each run vs the full download with the previous approach. Moreover, nowadays with DevOps culture and GitOps methodology, it is good to have a way to keep tracking in a Git repository all the changes and track with a CI/CD tool that runs to create and/or maintain the Disconnected Registry. I think it is a worthy tool that helps a lot in production environments.
 
 ## Links
 
