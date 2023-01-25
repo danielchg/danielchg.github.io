@@ -2,7 +2,7 @@
 title: "OpenShift hardening using the Compliance Operator"
 date: 2023-01-24T17:45:23+01:00
 tags: [SecDevOps,OpenShift,Security]
-draft: true
+draft: false
 ---
 
 # Table of Content
@@ -23,7 +23,7 @@ draft: true
 
 ## Introduction
 
-When we talk about Cyber Security there are a lot of aspect to be focused on to keep our services secure, and from the point of view of the platform, during all these years of Internet, the industry has created some standards in order to keep minimum requirement to think that our infrstructure is secure enough to avoid unauthorized access or DoS.
+When we talk about Cyber Security there are a lot of aspect to be focused on to keep our services secure, and from the point of view of the platform, during all these years of Internet, the industry has created some standards in order to keep minimum requirement to think that our infrastructure is secure enough to avoid unauthorized access or DoS.
 
 For Kubernetes, and also for OpenShift, exists some specification on how the clusters must be configured to minimize these security risks. Some of these standards that have specification for Kubernetes and OpenShift are:
 
@@ -33,16 +33,16 @@ For Kubernetes, and also for OpenShift, exists some specification on how the clu
 * NERC CIP
 * PCI
 
-All these standards trying to ensure that the configuration of the platform is secure to run workloads on production environments. Hence, when we want to ensure that our Kubernetes or OpenShift cluster is secure, we can run one or more of these bencharmark, and apply the remediations recomended to keep the configuration of our cluster according to these standards. Depend where your cluster is based will be convinient one or another.
+All these standards trying to ensure that the configuration of the platform is secure to run workloads on production environments. Hence, when we want to ensure that our Kubernetes or OpenShift cluster is secure, we can run one or more of these benchmarks, and apply the remediations recommended to keep the configuration of our cluster according to these standards. You can choose the profiles that are appropriate for your cluster depending on your use case.
 
-In the case of a Kubernetes or OpenShift clusters we must pass two kind of benchmarks, one for the operation system and other for the control plain of our cluster.
+In the case of Kubernetes or OpenShift clusters we must pass two kinds of benchmarks, one for the operation system and other for the control plane of our cluster.
 
 
-For this post we are going to use a Single Node OpenShift `v4.11.22` where we are going to install the Compliance Operator, and the required dependencies. During this article we are going to create a basic configuration to run a compliance scan, understand the results and the remediations. We are not going to see in detail each part of the Operator or review all the features, this is an introduction to understand the value of this operator, and how to run quickly a first scan to perform a hardening of our cluster.
+For this post we are going to use a Single Node OpenShift `v4.11.22` where we are going to install the Compliance Operator, and the required dependencies. During this article we are going to create a basic configuration to run a compliance scan, understand the results and the remediations. We are not going to see in detail each part of the Operator or review all the features, this is an introduction to understand the value of this operator, and how to quickly run a first scan to perform a hardening of our cluster.
 
 ## Compliance Operator
 
-This operator try to make easy to scan our cluster to check the status of the compliance based on some standards profiles, like the described above. This operator is based on the open-source tool [OpenSCAP](https://www.open-scap.org/tools/openscap-base/). For more information about the Compliance Operator you can visit the [official documentation](https://docs.openshift.com/container-platform/4.12/security/compliance_operator/compliance-operator-understanding.html). 
+This operator tries to make it easy to scan our cluster to check the status of the compliance based on some standards profiles, like the described above. This operator is based on the open-source tool [OpenSCAP](https://www.open-scap.org/tools/openscap-base/). For more information about the Compliance Operator you can visit the [official documentation](https://docs.openshift.com/container-platform/4.12/security/compliance_operator/compliance-operator-understanding.html). 
 
 ### Requirements
 
@@ -52,7 +52,7 @@ It also required a default `StorageClass` configured, to allow the creation of P
 
 ### Installation
 
-The **Compliance Operator** is available on OperatorHub to be installed using OLM, hence the procedure is the same as install any other operator on OpenShift, just need to create a `Namespace`, an `OperatorGroup` and a `Subscription` objects. Below are the `YAML` files and commands used to created these object on our cluster.
+The **Compliance Operator** is available on OperatorHub to be installed using OLM, hence the procedure is the same as installing any other operator on OpenShift, just need to create a `Namespace`, an `OperatorGroup` and a `Subscription` object. Below are the `YAML` files and commands used to create these objects on our cluster.
 
 **namespace.yaml**
 ```yaml
@@ -111,7 +111,7 @@ Command to create the `OperatorGroup` object.
 oc apply -f subscription.yaml
 ```
 
-Once these objects are applied to our cluster we can check if the operator is installed, for that we can check a couple of thing. The first thing is to check the `ClusterServiceVersion`.
+Once these objects are applied to our cluster we can check if the operator is installed, for that we can check a couple of things. The first thing is to check the `ClusterServiceVersion`.
 
 ```bash
 $ oc -n openshift-compliance get csv
@@ -133,9 +133,9 @@ If the above checks fails you can follow [this troubleshooting guide for OLM](ht
 
 ### Configure and run scans
 
-Awesome! At this point we have our OCP cluster running with the **Compliance Operator** running. Now is time to see witch compliance profiles are available to be used, and how to configure the execution of these scans in our cluster.
+Awesome! At this point we have our OCP cluster running with the **Compliance Operator** running. Now is time to see whitch compliance profiles are available to be used, and how to configure the execution of these scans in our cluster.
 
-First of all we are going to check witch compliance profiles are availabes, for that we are going to get the list of objects within the `profiles.compliance.openshift.io` CRD. Run the below command, and we should get an output similiar to the capture.
+First of all we are going to check whitch compliance profiles are available, for that we are going to get the list of objects within the `profiles.compliance.openshift.io` CRD. Run the below command, and we should get an output similar to the capture.
 
 ```bash
 $ oc get profiles.compliance.openshift.io 
@@ -157,9 +157,9 @@ rhcos4-moderate      7d19h
 rhcos4-nerc-cip      7d19h
 ```
 
-As you can see there are profiles availables based on the standars listed above in the introduction. For this article we are going to run the profiles `ocp4-cis`, `ocp4-cis-node` and `ocp4-moderate` for the control plane scans, and `rhcos4-moderate` for the OS scans. 
+As you can see there are profiles availables based on the standards listed above in the introduction. For this article we are going to run the profiles `ocp4-cis`, `ocp4-cis-node` and `ocp4-moderate` for the control plane scans, and `rhcos4-moderate` for the OS scans. 
 
-How this operator is configured is similar to how **RBAC** is configured, in **RBAC** we define `Users` and `Roles`, and alter on we create a `RoleBinding`, in the case of the **Compliance Operator** we are going to define `ScanSettings` and we have the listed above `profiles`, and later on we are going to createa a `ScanSettingBinding` where we configure the run of the scan. Let's see how to confiture our scan to run the desired `profiles`.
+How this operator is configured is similar to how **RBAC** is configured, in **RBAC** we define `Users` and `Roles`, and alter on we create a `RoleBinding`, in the case of the **Compliance Operator** we are going to define `ScanSettings` and we have the listed above `profiles`, and later on we are going to create a `ScanSettingBinding` where we configure the run of the scan. Let's see how to configure our scan to run the desired `profiles`.
 
 #### Create ScanSettings
 
@@ -211,7 +211,7 @@ Create the `ScanSettins` object running the belo command.
 oc apply -f scansettings.yaml
 ```
 
-Verify that our `ScanSettings` have been created properly. The output should be similar to the below capture, be aware that exist two fault `ScanSettings`, one with auto remediation enabled and another without it. 
+Verify that our `ScanSettings` have been created properly. The output should be similar to the below capture, be aware that there exist two fault `ScanSettings`, one with auto remediation enabled and another without it. 
 
 ```bash
 $ oc -n openshift-compliance get scansettings
@@ -223,7 +223,7 @@ first-scan           7d22h
 
 #### Create ScanSettingBinding
 
-As I mentioned before the configuration of this operator is pretty similar on how you have to configure **RBAC**, you create some objects and later on you have to create a binding of those. Now we already have the `ScanSettings` and the pre-installed `profiles`, hence the next step is to create a `ScanSettingBinding` to describe wich `profiles` will be use for the scan with which `ScanSettings`. Be aware that we can not create a `ScanSettingBinding` for `profiles` that are not of the same kind, that means that we have to create one `ScanSettingBinding` for the scan of the control plane and another for the OS of the hosts.
+As I mentioned before the configuration of this operator is pretty similar on how you have to configure **RBAC**, you create some objects and later on you have to create a binding of those. Now we already have the `ScanSettings` and the pre-installed `profiles`, hence the next step is to create a `ScanSettingBinding` to describe which `profiles` will be used for the scan with which `ScanSettings`. Be aware that we can not create a `ScanSettingBinding` for `profiles` that are not of the same kind, that means that we have to create one `ScanSettingBinding` for the scan of the control plane and another for the OS of the hosts.
 
 **scansettingbinding-ocp4.yaml**
 ```yaml
@@ -271,7 +271,7 @@ We apply those to `ScanSettingBinding` objects.
 apply -f smb-scan': oc apply -f scansettingbinding-ocp4.yaml scansettingbinding-rhcos4.yaml
 ```
 
-Once the `ScanSettingBinding` are applied the scan will start at the scheduled date and time. To validate that the scan is running you can execute the below command, be awate that the capture is done when the scans are finished, if the scans are in progress you should see in the status **RUNNING** instead of **DONE**.
+Once the `ScanSettingBinding` is applied the scan will start at the scheduled date and time. To validate that the scan is running you can execute the below command, be aware that the capture is done when the scans are finished, if the scans are in progress you should see in the status **RUNNING** instead of **DONE**.
 
 ```bash
 $ oc -n openshift-compliance get compliancescans.compliance.openshift.io 
@@ -300,7 +300,7 @@ rhcos4-openshift-compliance-pp-7bf7d6bd96-nw2lf   1/1     Running     7         
 
 ### Get results
 
-OK! So far so good, we already have run the scans, but the goal of this is understand the security compliance of our cluster, and remediate the configuration if not. In order to see that we can get the results of the scans querying the CRD `compliancecheckresults.compliance.openshift.io`, and will get the list of all the reports generated by the scan.
+OK! So far so good, we already have run the scans, but the goal of this is to understand the security compliance of our cluster, and remediate the configuration if not. In order to see that we can get the results of the scans querying the CRD `compliancecheckresults.compliance.openshift.io`, and will get the list of all the reports generated by the scan.
 
 ```bash
 $ oc -n openshift-compliance get compliancecheckresults.compliance.openshift.io
@@ -334,9 +334,9 @@ ocp4-cis-configure-network-policies-namespaces                                  
 
 ```
 
-Some of the output have been removed due to the amount of lines, there are more than 500 results, but in the capture we can see different kind of reports, with different statuses and severities.
+Some of the output have been removed due to the amount of lines, there are more than 500 results, but in the capture we can see different kinds of reports, with different statuses and severities.
 
-As we already saw in the previous section, the output of the compliancescans was that the result of each scan was **NON-COMPLIANT**, that means that we have at least one check that in **FAIL** status. If you take a look to the results caputre you can find multimples results with status **FAIL**. 
+As we already saw in the previous section, the output of the `compliancescans` was that the result of each scan was **NON-COMPLIANT**, that means that we have at least one check that in **FAIL** status. If you take a look to the results capture you can find multiples results with status **FAIL**. 
 
 Now, what is important for us, are the **FAIL** results, to get only these results we can use the below command.
 
@@ -349,7 +349,7 @@ rhcos4-moderate-master-service-usbguard-enabled          FAIL     medium
 rhcos4-moderate-master-usbguard-allow-hid-and-hub        FAIL     medium
 ```
 
-That's fine, we can see what is wrong in our cluster configuration, but how about to understand what means each scan. On each standard all the checks have an explaination about why this misconfiguration is a security risk, and also show a remediation. In order to see this information we can get it from the content of each result object, the example below show how to see those details from one of the failed results.
+That's fine, we can see what is wrong in our cluster configuration, but how about to understand what each scan means. On each standard all the checks have an explanation about why this misconfiguration is a security risk, and also show a remediation. In order to see this information we can get it from the content of each result object, the example below shows how to see those details from one of the failed results.
 
 ```bash
 $ oc -n openshift-compliance get compliancecheckresults.compliance.openshift.io ocp4-cis-audit-profile-set -oyaml | yq .description
@@ -367,7 +367,7 @@ $ oc get apiservers cluster -ojsonpath='{.spec.audit.profile}'
 Make sure the profile returned matches the one that should be used.
 ```
 
-In the next section we are going to go more in details about the remediations, but it is important to see how to get this information from the results, because the failed results are recomendation, and these recomendation maybe that are incompatible with our scenario because another requirement from our usecase.
+In the next section we are going to go more in detail about the remediations, but it is important to see how to get this information from the results, because the failed results are recommendations, and these recommendations may be incompatible with our scenario because of another requirement from our use case.
 
 Just in case that you need to share this report with someone else like I had to do, I wrote the next script to export the failed results to a `.csv` file.
 
@@ -387,9 +387,9 @@ done
 
 ### Remediations
 
-Eventually we are installing this operator and run all these scans to try to configure our cluster more secure, and so far we just know that there are some changes to do in our configuration to fit the desired stadards. Here is where comes the power of this operator, because of each failed result the operator also create a CRD called `complianceremediations.compliance.openshift.io` which allow to the operator to apply the remediation in our cluster. This auto remediations are not applicable for those results with status **MANUAL**, those results required of a manual intervention to be solved.
+Eventually we are installing this operator and running all these scans to try to configure our cluster more securely, and so far we just know that there are some changes to do in our configuration to fit the desired standards. this is where the power of this operator lies, because of each failed result the operator also creates a CRD called `complianceremediations.compliance.openshift.io` which allows the operator to apply the remediation in our cluster. This auto remediations are not applicable for those results with status **MANUAL**, those results required manual intervention to be solved.
 
-The next command list all the `complianceremediations` and the status. In the capture all the auto remediation have been applied already, this is the reason why the status of all is `Applied`, but if you have run the scan with the `ScanSettings` without enable the `autoApplyRemediations` option you will see a different outpu.
+The next command lists all the `complianceremediations` and the status. In the capture all the auto remediation have been applied already, this is the reason why the status of all is `Applied`, but if you have run the scan with the `ScanSettings` without enable the `autoApplyRemediations` option you will see a different output.
 
 ```bash
 $ oc get complianceremediations.compliance.openshift.io | more
@@ -453,7 +453,7 @@ status:
   applicationState: Applied
 ```
 
-As you can see in the capture eventually the `ComplianceRemediation` object will apply a `MachineConfig` in our cluster to configure our cluster with the recomendations. Hence, for each remediation we can get the `MachineConfig` object that solve this proble. If we want we can get these object to be applied to another cluster that is not running the Compliance Operator but we want that fit with the recomendations. The command below show how to get this `MachineConfig` object from the `ComplianceRemediation` object.
+As you can see in the capture, eventually the `ComplianceRemediation` object will apply a `MachineConfig` in our cluster to configure our cluster with the recommendations. Hence, for each remediation we can get the `MachineConfig` object that solves this problem. If we want we can get these objects to be applied to another cluster that is not running the Compliance Operator but we want that to fit with the recommendations. The command below shows how to get this `MachineConfig` object from the `ComplianceRemediation` object.
 
 ```bash
 $ oc get complianceremediations.compliance.openshift.io rhcos4-moderate-master-audit-rules-dac-modification-chmod -oyaml | yq .spec.current.object
@@ -474,9 +474,9 @@ spec:
 
 ## Conclusions
 
-The Security is something very important to take care on production environments. Rrom the platform perspective the described standards and tools helps to keep a better configuration, and a more robust environment where we can run our workloads.
+Security is something very important to take care of in production environments. From the platform perspective the described standards and tools help to keep a better configuration, and a more robust environment where we can run our workloads.
 
-The Compliance Operator helps us to get those misconfigurations and, understand and apply, remediations to keep a more secure environment, with only apply some OpenShift object to our cluster. Also the remediation can be listed and exported the `MachineConfig` objects to be applied to a different cluster that is not running the Compliance Operator.
+The Compliance Operator helps us to get those misconfigurations and, understand and apply, remediations to keep a more secure environment, with only applying some OpenShift object to our cluster. Also the remediation can be listed and exported the `MachineConfig` objects to be applied to a different cluster that is not running the Compliance Operator.
 
 ## Links
 
