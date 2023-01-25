@@ -474,9 +474,9 @@ spec:
 
 ## Conclusions
 
-The Security is something very important to take care on production environments, and from the platform perspective these described standadrs and tools helps a lot to have a better configuration that avoid some known issues, and have a more robust environment where we can run our workloads.
+The Security is something very important to take care on production environments. Rrom the platform perspective the described standards and tools helps to keep a better configuration, and a more robust environment where we can run our workloads.
 
-The Compliance Operator helps us to remediate those posible misconfiguration from security perspective and keep a more secure environment.
+The Compliance Operator helps us to get those misconfigurations and, understand and apply, remediations to keep a more secure environment, with only apply some OpenShift object to our cluster. Also the remediation can be listed and exported the `MachineConfig` objects to be applied to a different cluster that is not running the Compliance Operator.
 
 ## Links
 
