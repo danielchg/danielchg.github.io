@@ -120,7 +120,7 @@ NAME                          DISPLAY               VERSION   REPLACES   PHASE
 compliance-operator.v0.1.59   Compliance Operator   0.1.59               Succeeded
 ```
 
-The second oen is listing all the pods running in the `openshift-compliance` Namespace, the output should be something similar as below.
+The second one is listing all the pods running in the `openshift-compliance` Namespace, the output should be something similar as below.
 
 ```bash
 $ oc -n openshift-compliance get pods
@@ -269,7 +269,7 @@ settingsRef:
 We apply those to `ScanSettingBinding` objects.
 
 ```bash
-apply -f smb-scan': oc apply -f scansettingbinding-ocp4.yaml scansettingbinding-rhcos4.yaml
+oc apply -f scansettingbinding-ocp4.yaml scansettingbinding-rhcos4.yaml
 ```
 
 Once the `ScanSettingBinding` is applied, the scan will start at the scheduled date and time. To validate that the scan is running, execute the below command, be aware that the capture is done when the scans are finished, if the scans are in progress, the status is **RUNNING** instead of **DONE**.
