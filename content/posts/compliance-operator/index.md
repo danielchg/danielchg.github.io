@@ -35,7 +35,7 @@ For Kubernetes/OpenShift, there are existing specifications on how the clusters 
 
 All these standards are trying to ensure that the configuration of the platform is secure to run workloads on production environments. Hence, to guarantee that our Kubernetes/OpenShift cluster is secure, we can run one or more of these benchmarks, and apply the remediations recommended. You can choose the profiles that are appropriate for your cluster depending on your use case.
 
-In the case of Kubernetes/OpenShift clusters we must provide two kinds of benchmarks, one for the operation system and another one for the control plane.
+In the case of Kubernetes/OpenShift clusters we must provide two kinds of benchmarks, one for the operating system and another one for the control plane.
 
 In this post, we are going to use a Single Node OpenShift running with version `v4.11.22` where we are going to install the Compliance Operator, and its required dependencies. As part of this article, we will create a basic configuration to run a compliance scan, understand the results and the remediations. We won't cover each part of the Operator or review all the features as this is meant to be an introduction to the value of this operator and how to quickly run a first scan to perform hardening.
 
@@ -106,7 +106,7 @@ spec:
   sourceNamespace: openshift-marketplace
 
 ```
-Command to create the `OperatorGroup` object.
+Command to create the `Subscription` object.
 
 ```bash
 oc apply -f subscription.yaml
@@ -206,7 +206,7 @@ strictNodeScan: true
 # autoApplyRemediations: true
 # autoUpdateRemediations: true
 ```
-Create the `ScanSettins` object running the below command.
+Create the `ScanSettings` object running the below command.
 
 ```bash
 oc apply -f scansettings.yaml
@@ -269,7 +269,7 @@ settingsRef:
 We apply those to `ScanSettingBinding` objects.
 
 ```bash
-oc apply -f scansettingbinding-ocp4.yaml scansettingbinding-rhcos4.yaml
+oc apply -f scansettingbinding-ocp4.yaml -f scansettingbinding-rhcos4.yaml
 ```
 
 Once the `ScanSettingBinding` is applied, the scan will start at the scheduled date and time. To validate that the scan is running, execute the below command, be aware that the capture is done when the scans are finished, if the scans are in progress, the status is **RUNNING** instead of **DONE**.
