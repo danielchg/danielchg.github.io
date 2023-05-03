@@ -32,11 +32,6 @@ theme = "m10c"
   weight = 300
 
 [[params.social]]
-  icon = 'twitter'
-  name = 'twitter'
-  url = 'https://twitter.com/dani_chg'
-
-[[params.social]]
   icon = 'github'
   name = 'github'
   url = 'https://github.com/danielchg'
