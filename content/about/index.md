@@ -68,6 +68,8 @@ draft: false
 
 ## Certifications
 ---
+* **RHCOA** Red Hat Certified OpenShift Administrator (2023)
+* **RHCSA** Red Hat Certified System Administrator (2023)
 * **CKS** Certified Kubernetes Security (2022)
 * **CKA** Certified Kubernetes Administrator (2019)
 * **ACSAA** AWS Certified Solutions Architect Associate (2017)
