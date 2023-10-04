@@ -1,8 +1,8 @@
 ---
-title: "How configure dnsmasq for dual stack ipv4/ipv6"
+title: "How to configure dnsmasq for dual stack ipv4/ipv6"
 date: 2023-10-03T13:19:23+02:00
 tags: [DevOps,Networking]
-draft: true
+draft: false
 ---
 
 # Table of Contents
@@ -23,9 +23,9 @@ draft: true
 
 # Scenario 
 
-Nowadays it is more and more common to start working with networks that support ipv6, in order to adapt our environment to the new version of the ip stack. Also we want to keep our ipv4 configuration for legacy applications. In this article I'm going to explain how to configure a DHCP and a DNS server to have an environment with support of both ip stacks. This configurations is commonly named dual stack.
+Nowadays it is more and more common to start working with networks that support ipv6, in order to adapt our environment to the new version of the ip stack. Also we want to keep our ipv4 configuration for legacy applications. In this article I'm going to explain how to configure a DHCP and a DNS server to have an environment with support of both ip stacks. This configuration is commonly named dual stack.
 
-At the moment of this writing I had to configure one lab environment with this requirement, the support of dual stack, and it was tedious to find the correct configuration for that, so the goal of this article is describe some common configurations such ip reservations, DNS entries to resolve both ip stacks, etc. Also I have writing this article as reference for myself.
+At the moment of this writing I had to configure a lab environment with dual stack support, and it was tedious to me to find the correct configuration for that. The goal of this article is to describe some common configurations such as ip reservations, add DNS entries, etc. Also I have written this article as a personal reference.
 
 # Dnsmasq
 
@@ -37,13 +37,13 @@ The official documentation can be found [here](https://thekelleys.org.uk/dnsmasq
 
 Dnsmasq is very popular, and it is included in almost all the Linux distributions, and also there are a lot of community container images available. For this article I'm going to use the package available on Fedora 38.
 
-The below command will install dnsmasq package.
+The below command will install *dnsmasq* package.
 
 ```bash
 $ sudo dnf install dnsmasq
 ```
 
-Once the *dnsmasq* package is installed, it is configured a systemd unit to run the server. We have to enable and start the it, as show in the below commands.
+Once *dnsmasq* is installed, we have to enable and start the systemd service, as described in the below capture.
 
 ```bash
 $ sudo systemctl enable dnsmasq.service
@@ -69,9 +69,9 @@ $ systemctl status dnsmasq
 
 # Configuration
 
-The whole config file described in this section is available as a GitHub gist in [here](https://gist.github.com/danielchg/fe59f31496d7f1d210123c4d80324565)
+You can find the whole config file used in this article in [this GitHub gist](https://gist.github.com/danielchg/fe59f31496d7f1d210123c4d80324565)
 
-The main config file of *dnsmasq* in Fedora is in the path `/etc/dnsmasq.conf`. By default this file contain an entry that permit to add dnsmasq config files in the path `/etc/dnsmasq.d/`, so we are going to create a file in that path with the name `dualstack.conf` and the content from the gist linked above. Depending of your environment you should update the values such the domain name, interface, ips, etc.
+The main config file of *dnsmasq* in Fedora is in the path `/etc/dnsmasq.conf`. By default this file contain an entry that permit to add dnsmasq config files in the path `/etc/dnsmasq.d/` to extend the main config, so we are going to create a file in that path with the name `dualstack.conf` and the content from the gist linked above. Depending of your environment you should update the values such as the domain name, interface, ips, etc.
 
 Now I'm going to explain each section of the config file.
 
