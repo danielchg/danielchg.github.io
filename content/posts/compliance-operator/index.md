@@ -244,7 +244,7 @@ profiles:
     kind: Profile
     apiGroup: compliance.openshift.io/v1alpha1
 settingsRef:
-  name: test-scan
+  name: first-scan
   kind: ScanSetting
   apiGroup: compliance.openshift.io/v1alpha1
 ```
@@ -261,7 +261,7 @@ profiles:
     kind: Profile
     apiGroup: compliance.openshift.io/v1alpha1
 settingsRef:
-  name: test-scan
+  name: first-scan
   kind: ScanSetting
   apiGroup: compliance.openshift.io/v1alpha1
 ```
