@@ -119,7 +119,7 @@
 </span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Profile</span>
 </span></span><span style=display:flex><span>    <span style=color:#f92672>apiGroup</span>: <span style=color:#ae81ff>compliance.openshift.io/v1alpha1</span>
 </span></span><span style=display:flex><span><span style=color:#f92672>settingsRef</span>:
-</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>test-scan</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>first-scan</span>
 </span></span><span style=display:flex><span>  <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>ScanSetting</span>
 </span></span><span style=display:flex><span>  <span style=color:#f92672>apiGroup</span>: <span style=color:#ae81ff>compliance.openshift.io/v1alpha1</span>
 </span></span></code></pre></div><p><strong>scansettingbinding-rhcos4.yaml</strong></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>compliance.openshift.io/v1alpha1</span>
@@ -132,7 +132,7 @@
 </span></span><span style=display:flex><span>    <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Profile</span>
 </span></span><span style=display:flex><span>    <span style=color:#f92672>apiGroup</span>: <span style=color:#ae81ff>compliance.openshift.io/v1alpha1</span>
 </span></span><span style=display:flex><span><span style=color:#f92672>settingsRef</span>:
-</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>test-scan</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>first-scan</span>
 </span></span><span style=display:flex><span>  <span style=color:#f92672>kind</span>: <span style=color:#ae81ff>ScanSetting</span>
 </span></span><span style=display:flex><span>  <span style=color:#f92672>apiGroup</span>: <span style=color:#ae81ff>compliance.openshift.io/v1alpha1</span>
 </span></span></code></pre></div><p>We apply those to <code>ScanSettingBinding</code> objects.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc apply -f scansettingbinding-ocp4.yaml -f scansettingbinding-rhcos4.yaml
