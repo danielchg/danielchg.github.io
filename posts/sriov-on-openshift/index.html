@@ -1,0 +1,338 @@
+<!doctype html><html lang=en-us><head><title>SR-IOV on OpenShift // Daniel Ops</title>
+<link rel="shortcut icon" href=/favicon.ico><meta charset=utf-8><meta name=generator content="Hugo 0.127.0"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=author content="Daniel Chavero Gaspar"><meta name=description content><link rel=stylesheet href=https://danielchg.github.io/css/main.min.4a7ec8660f9a44b08c4da97c5f2e31b1192df1d4d0322e65c0dbbc6ecb1b863f.css><meta name=twitter:card content="summary"><meta name=twitter:title content="SR-IOV on OpenShift"><meta name=twitter:description content="Table of Contents Table of Contents Introduction What is SR-IOV Describe environment used for this article How to use it on OpenShift Install SR-IOV operator Validate SR-IOV support on the NIC Concepts and configurations Configure VFs Deploy workloads that use VFs as second interface Troubleshooting Conclusions Resources Introduction At the moment of this writing, the big actors on 5G, are making a huge effort to transform their workloads to be deployed as cloud native apps."><meta property="og:url" content="https://danielchg.github.io/posts/sriov-on-openshift/"><meta property="og:site_name" content="Daniel Ops"><meta property="og:title" content="SR-IOV on OpenShift"><meta property="og:description" content="Table of Contents Table of Contents Introduction What is SR-IOV Describe environment used for this article How to use it on OpenShift Install SR-IOV operator Validate SR-IOV support on the NIC Concepts and configurations Configure VFs Deploy workloads that use VFs as second interface Troubleshooting Conclusions Resources Introduction At the moment of this writing, the big actors on 5G, are making a huge effort to transform their workloads to be deployed as cloud native apps."><meta property="og:locale" content="en_us"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2024-06-05T15:59:54+02:00"><meta property="article:modified_time" content="2024-06-05T15:59:54+02:00"><meta property="article:tag" content="Telco"><meta property="article:tag" content="OpenShift"><meta property="article:tag" content="Networking"></head><body><header class=app-header><a href=https://danielchg.github.io/><img class=app-header-avatar src=/login-pic.jpg alt="Daniel Chavero Gaspar"></a><h1>Daniel Ops</h1><nav class=app-header-menu><a class=app-header-menu-item href=/posts/>Posts</a>
+|
+<a class=app-header-menu-item href=/tags/>Tags</a>
+|
+<a class=app-header-menu-item href=/about/>About Me</a></nav><p>A blog about whatever OPS!!</p><div class=app-header-social><a href=https://github.com/danielchg target=_blank rel="noreferrer noopener"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github"><title>github</title><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
+</a><a href=https://www.linkedin.com/in/daniel-chavero-gaspar-19107613/ target=_blank rel="noreferrer noopener"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin"><title>linkedin</title><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a></div></header><main class=app-container><article class=post><header class=post-header><h1 class=post-title>SR-IOV on OpenShift</h1><div class=post-meta><div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar"><title>calendar</title><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+Jun 5, 2024</div><div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock"><title>clock</title><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+13 min read</div><div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag"><title>tag</title><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+<a class=tag href=https://danielchg.github.io/tags/telco/>Telco</a>
+<a class=tag href=https://danielchg.github.io/tags/openshift/>OpenShift</a>
+<a class=tag href=https://danielchg.github.io/tags/networking/>Networking</a></div></div></header><div class=post-content><h1 id=table-of-contents>Table of Contents</h1><ul><li><a href=#table-of-contents>Table of Contents</a><ul><li><a href=#introduction>Introduction</a><ul><li><a href=#what-is-sr-iov>What is SR-IOV</a></li><li><a href=#describe-environment-used-for-this-article>Describe environment used for this article</a></li></ul></li><li><a href=#how-to-use-it-on-openshift>How to use it on OpenShift</a><ul><li><a href=#install-sr-iov-operator>Install SR-IOV operator</a></li><li><a href=#validate-sr-iov-support-on-the-nic>Validate SR-IOV support on the NIC</a></li><li><a href=#concepts-and-configurations>Concepts and configurations</a></li><li><a href=#configure-vfs>Configure VFs</a></li><li><a href=#deploy-workloads-that-use-vfs-as-second-interface>Deploy workloads that use VFs as second interface</a></li></ul></li><li><a href=#troubleshooting>Troubleshooting</a></li><li><a href=#conclusions>Conclusions</a></li><li><a href=#resources>Resources</a></li></ul></li></ul><h2 id=introduction>Introduction</h2><p>At the moment of this writing, the big actors on 5G, are making a huge effort to transform their workloads to be deployed as cloud native apps. Part of this effort is to run those workloads as containers on top of a platform based on Kubernetes.</p><p>Other important challenge from Telco actors, is to interact as close as possible with the networking hardware, in order to reduce the latency during runtime. One of the industry standards involved to get this is SR-IOV.</p><p>During this article let&rsquo;s try to explain what is SR-IOV, how it works on OpenShift and how to deploy workloads that use the advantage of it.</p><p>This article is not going to explain anything related with the Telco workloads, or walk you through the details on how the SR-IOV is implemented at hardware level, or even the software. The goal of this article is to introduce the use of SR-IOV on OpenShift, mainly focus for SRE or other technical roles involved on use OpenShift for Telco deployments, as architects, DevOps, platform engineers, etc. A lot of interesting articles already exist about this topic, but I like to share my experience on this and share some tips I found during my path.</p><h3 id=what-is-sr-iov>What is SR-IOV</h3><p><strong>Single Root input/output Virtualization (SR-IOV)</strong> is a specification that allows the isolation in PCIe network devices, to create subsets of virtual interfaces called Virtual Functions (VF). This way in single physical devices (called Physical Function), it is possible to create at hardware level VFs.</p><p>Using SR-IOV devices, it is possible to have direct access to the Direct Memory Access (DMA) from the workload, which allow to get a low latency and better performance. In the case of virtualization allow the VM to interact directly with hardware via the PCI bus, and in the case of containers can be used DPDK for that, to interact directly with the hardware from the user space, instead of from the kernel space. The explanation of what is DPDK libraries and how works is not part of this article, but for sure that it is a very important topic that need to be understood by the reader. Some resource about DPDK are included at the end of the article if you are more interested on that.</p><h3 id=describe-environment-used-for-this-article>Describe environment used for this article</h3><p>The environment used for this article is a baremetal laboratory, compound by five <strong>Dell PowerEdge R450</strong> nodes. Three of these nodes are the control plane nodes of the cluster, and the other two are worker nodes. The installation of the cluster is out of the scope of this article. You can refer to the <a href=https://docs.openshift.com/container-platform/4.14/installing/index.html>OpenShift official documentation</a> for that.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$oc get nodes,clusterversion
+</span></span><span style=display:flex><span>NAME                         STATUS   ROLES                  AGE     VERSION
+</span></span><span style=display:flex><span>node/master0.ocp1.r450.org   Ready    control-plane,master   7d22h   v1.27.10+c79e5e2
+</span></span><span style=display:flex><span>node/master1.ocp1.r450.org   Ready    control-plane,master   7d22h   v1.27.10+c79e5e2
+</span></span><span style=display:flex><span>node/master2.ocp1.r450.org   Ready    control-plane,master   7d22h   v1.27.10+c79e5e2
+</span></span><span style=display:flex><span>node/worker0.ocp1.r450.org   Ready    worker                 7d22h   v1.27.10+c79e5e2
+</span></span><span style=display:flex><span>node/worker1.ocp1.r450.org   Ready    worker                 7d22h   v1.27.10+c79e5e2
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>NAME                                         VERSION   AVAILABLE   PROGRESSING   SINCE   STATUS
+</span></span><span style=display:flex><span>clusterversion.config.openshift.io/version   4.14.16   True        False         7d22h   Cluster version is 4.14.16
+</span></span></code></pre></div><p>The worker nodes have connected an <strong>Intel E810-XXV</strong> NIC on each one, which support SR-IOV.</p><h2 id=how-to-use-it-on-openshift>How to use it on OpenShift</h2><p>Now that we understand how SR-IOV works and why it is important for Telco deployments, let&rsquo;s walk through how to use it on OpenShift.</p><p>As most of the implementations on Kubernetes or OpenShift, the main way to extend features of our cluster is via an operator. This is not an exception, there is a SR-IOV operator that allow us to configure everything via the Kubernetes API applying YAML manifest.</p><h3 id=install-sr-iov-operator>Install SR-IOV operator</h3><p>The installation of the SR-IOV operator is straight forward using OLM. It is very well documented in the <a href=https://docs.openshift.com/container-platform/4.14/networking/hardware_networks/installing-sriov-operator.html>OpenShift official documentation</a>, but let&rsquo;s summarize in here how to do it using the <code>oc</code> CLI.</p><ul><li>Create the <strong>openshift-sriov-network-operator</strong> namespace:</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ cat <span style=color:#e6db74>&lt;&lt; EOF| oc create -f -
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>apiVersion: v1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>kind: Namespace
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>metadata:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  name: openshift-sriov-network-operator
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  annotations:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    workload.openshift.io/allowed: management
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>EOF</span>
+</span></span></code></pre></div><ul><li>Create the OperatorGroup for the SR-IOV operator:</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ cat <span style=color:#e6db74>&lt;&lt; EOF| oc create -f -
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>apiVersion: operators.coreos.com/v1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>kind: OperatorGroup
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>metadata:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  name: sriov-network-operators
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  namespace: openshift-sriov-network-operator
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>spec:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  targetNamespaces:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  - openshift-sriov-network-operator
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>EOF</span>
+</span></span></code></pre></div><ul><li>Create the Subscription:</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ cat <span style=color:#e6db74>&lt;&lt; EOF| oc create -f -
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>apiVersion: operators.coreos.com/v1alpha1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>kind: Subscription
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>metadata:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  name: sriov-network-operator-subscription
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  namespace: openshift-sriov-network-operator
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>spec:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  channel: stable
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  name: sriov-network-operator
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  source: redhat-operators
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  sourceNamespace: openshift-marketplace
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>EOF</span>
+</span></span></code></pre></div><ul><li>Verify the installation:</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$oc get csv -n openshift-sriov-network-operator <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>  -o custom-columns<span style=color:#f92672>=</span>Name:.metadata.name,Phase:.status.phase
+</span></span><span style=display:flex><span>Name                                          Phase
+</span></span><span style=display:flex><span>sriov-network-operator.v4.14.0-202405161337   Succeeded
+</span></span></code></pre></div><h3 id=validate-sr-iov-support-on-the-nic>Validate SR-IOV support on the NIC</h3><p>As we already mentioned above, it is mandatory for using SR-IOV to have support at hardware level. The list of devices supported at the time of this writing are listed in the <a href=https://docs.openshift.com/container-platform/4.14/networking/hardware_networks/about-sriov.html#supported-devices_about-sriov>OpenShift official documentation</a>. In the environment used to write this article are installed the <strong>Intel E810</strong> NICs which support SR-IOV. But even the NIC support it, we have to ensure that it is enabled in the BIOS settings.</p><p>To ensure that the required configurations for the NIC are enabled, we need to connect to the server BMC, in our case iDRAC because is a DELL machine. From there, we have to open the Virtual Console, reboot our system from the Power options, and follow the next workflow:</p><ol><li>Press <em><strong>F2</strong></em> (Enter System Setup)</li><li>Clikc on <em><strong>Device Settings</strong></em></li><li>Select your devices from the list, in our case <em><strong>NIC in Slot 3 Port 1: Intel(R) Ethernet 25G 2P E810-XXV Adapter</strong></em></li><li>From this view enable <em><strong>SR-IOV</strong></em> within the <em><strong>Virtualization Mode</strong></em>, as show below in the pic</li></ol><p><img src=/sriov-bios-enable.png alt="Enable SR-IOV"></p><ol start=5><li>Click on <em><strong>Finish</strong></em> until get the <em><strong>System Setup</strong></em> menu</li><li>Click on <em><strong>System BIOS</strong></em></li><li>Click on <em><strong>Integrated Devices</strong></em></li><li>Ensure that <em><strong>SR-IOV Global Enable</strong></em> is <em><strong>Enabled</strong></em> as show below</li></ol><p><img src=/sriov-bios-enable-2.png alt="Enable SR-IOV 2"></p><ol start=9><li>Click on <em><strong>Back</strong></em> and <em><strong>Finish</strong></em> until a window ask for confirmation and then click on <em><strong>Yes</strong></em></li></ol><p>At this point we are sure that SR-IOV is enabled in our NIC. Now let’s see from the OS that the driver support it. In the below capture the output of the <code>lspci</code> command show the capabilities of the devices, and there we can see that the card support SR-IOV.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>sh-5.1# lspci | grep E810
+</span></span><span style=display:flex><span>98:00.0 Ethernet controller: Intel Corporation Ethernet Controller E810-XXV <span style=color:#66d9ef>for</span> SFP <span style=color:#f92672>(</span>rev 02<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>98:00.1 Ethernet controller: Intel Corporation Ethernet Controller E810-XXV <span style=color:#66d9ef>for</span> SFP <span style=color:#f92672>(</span>rev 02<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>sh-5.1# lspci -s 98:00.0 -v
+</span></span><span style=display:flex><span>98:00.0 Ethernet controller: Intel Corporation Ethernet Controller E810-XXV <span style=color:#66d9ef>for</span> SFP <span style=color:#f92672>(</span>rev 02<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>        Subsystem: Intel Corporation Ethernet 25G 2P E810-XXV Adapter
+</span></span><span style=display:flex><span>        Flags: bus master, fast devsel, latency 0, IRQ 18, NUMA node <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span>        Memory at d4000000 <span style=color:#f92672>(</span>64-bit, prefetchable<span style=color:#f92672>)</span> <span style=color:#f92672>[</span>size<span style=color:#f92672>=</span>32M<span style=color:#f92672>]</span>
+</span></span><span style=display:flex><span>        Memory at d8010000 <span style=color:#f92672>(</span>64-bit, prefetchable<span style=color:#f92672>)</span> <span style=color:#f92672>[</span>size<span style=color:#f92672>=</span>64K<span style=color:#f92672>]</span>
+</span></span><span style=display:flex><span>        Expansion ROM at d1000000 <span style=color:#f92672>[</span>disabled<span style=color:#f92672>]</span> <span style=color:#f92672>[</span>size<span style=color:#f92672>=</span>1M<span style=color:#f92672>]</span>
+</span></span><span style=display:flex><span>        Capabilities: <span style=color:#f92672>[</span>40<span style=color:#f92672>]</span> Power Management version <span style=color:#ae81ff>3</span>
+</span></span><span style=display:flex><span>        Capabilities: <span style=color:#f92672>[</span>50<span style=color:#f92672>]</span> MSI: Enable- Count<span style=color:#f92672>=</span>1/1 Maskable+ 64bit+
+</span></span><span style=display:flex><span>        Capabilities: <span style=color:#f92672>[</span>70<span style=color:#f92672>]</span> MSI-X: Enable+ Count<span style=color:#f92672>=</span><span style=color:#ae81ff>1024</span> Masked-
+</span></span><span style=display:flex><span>        Capabilities: <span style=color:#f92672>[</span>a0<span style=color:#f92672>]</span> Express Endpoint, MSI <span style=color:#ae81ff>00</span>
+</span></span><span style=display:flex><span>        Capabilities: <span style=color:#f92672>[</span>e0<span style=color:#f92672>]</span> Vital Product Data
+</span></span><span style=display:flex><span>        Capabilities: <span style=color:#f92672>[</span>100<span style=color:#f92672>]</span> Advanced Error Reporting
+</span></span><span style=display:flex><span>        Capabilities: <span style=color:#f92672>[</span>148<span style=color:#f92672>]</span> Alternative Routing-ID Interpretation <span style=color:#f92672>(</span>ARI<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>        Capabilities: <span style=color:#f92672>[</span>150<span style=color:#f92672>]</span> Device Serial Number b4-83-51-ff-ff-00-66-a6
+</span></span><span style=display:flex><span>        Capabilities: <span style=color:#f92672>[</span>160<span style=color:#f92672>]</span> Single Root I/O Virtualization <span style=color:#f92672>(</span>SR-IOV<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>        Capabilities: <span style=color:#f92672>[</span>1a0<span style=color:#f92672>]</span> Transaction Processing Hints
+</span></span><span style=display:flex><span>        Capabilities: <span style=color:#f92672>[</span>1b0<span style=color:#f92672>]</span> Access Control Services
+</span></span><span style=display:flex><span>        Capabilities: <span style=color:#f92672>[</span>1d0<span style=color:#f92672>]</span> Secondary PCI Express
+</span></span><span style=display:flex><span>        Capabilities: <span style=color:#f92672>[</span>200<span style=color:#f92672>]</span> Data Link Feature &lt;?&gt;
+</span></span><span style=display:flex><span>        Capabilities: <span style=color:#f92672>[</span>210<span style=color:#f92672>]</span> Physical Layer 16.0 GT/s &lt;?&gt;
+</span></span><span style=display:flex><span>        Capabilities: <span style=color:#f92672>[</span>250<span style=color:#f92672>]</span> Lane Margining at the Receiver &lt;?&gt;
+</span></span><span style=display:flex><span>        Kernel driver in use: ice
+</span></span><span style=display:flex><span>        Kernel modules: ice
+</span></span></code></pre></div><h3 id=concepts-and-configurations>Concepts and configurations</h3><p>The SR-IOV operator has two main functions:</p><ul><li>At the control plane level, it is responsible of:<ul><li><strong>Network Resource Injector</strong>: when a new pod is created the SR-IOV operator mutate the resource to set the resource request, limits, annotations, labels, huge pages configuration, etc..</li><li><strong>Admission Controller</strong>: validate the values of the CR <code>SriovNetworkNodePolicy</code> to ensure the correct behavior when it is applied to the cluster.</li></ul></li><li>At the worker level:<ul><li><strong>Configure VFs</strong>: based on the <code>SriovNetworkNodePolicy</code> CR, it configure the required VFs in the NIC (also called PF) using the SR-IOV capability.</li></ul></li></ul><p>The CR to configure the generic aspects of the operator is called <code>sriovOperatorConfig</code>. Most of the values should be keep it by default. Only the <code>.spec.configDaemonNodeSelector</code> should be modified with the label of the nodes that we want to use for SR-IOV. In the below capture we are using the <code>workers</code> . If in your cluster you have a custom label for the nodes where the workloads that will use SR-IOV will run, you have to update it.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$
+</span></span><span style=display:flex><span><span style=color:#f92672>(</span>ocp1<span style=color:#f92672>)[</span>root@core-infra ~<span style=color:#f92672>]</span>$oc -n openshift-sriov-network-operator get sriovoperatorconfig default -ojsonpath<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;{.spec.configDaemonNodeSelector}&#39;</span> | jq
+</span></span><span style=display:flex><span><span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;node-role.kubernetes.io/worker&#34;</span>: <span style=color:#e6db74>&#34;&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>In the below capture it is shown the SR-IOV pods that run on each kind of node, the responsible of the control plane run on the control plane nodes, and the ones responsible to configure at the node level the VFs run on the worker nodes.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$oc -n openshift-sriov-network-operator get pods -o wide
+</span></span><span style=display:flex><span>NAME                                     READY   STATUS    RESTARTS   AGE     IP             NODE                    
+</span></span><span style=display:flex><span>network-resources-injector-4gwjq         1/1     Running   <span style=color:#ae81ff>0</span>          8d      10.128.1.247   master0.ocp1.r450.org
+</span></span><span style=display:flex><span>network-resources-injector-7b9hn         1/1     Running   <span style=color:#ae81ff>1</span>          8d      10.129.0.65    master2.ocp1.r450.org
+</span></span><span style=display:flex><span>network-resources-injector-kfljq         1/1     Running   <span style=color:#ae81ff>0</span>          8d      10.128.2.37    master1.ocp1.r450.org
+</span></span><span style=display:flex><span>sriov-device-plugin-5npwg                1/1     Running   <span style=color:#ae81ff>0</span>          6d19h   10.6.115.23    worker0.ocp1.r450.org
+</span></span><span style=display:flex><span>sriov-device-plugin-hkws8                1/1     Running   <span style=color:#ae81ff>0</span>          19h     10.6.115.24    worker1.ocp1.r450.org
+</span></span><span style=display:flex><span>sriov-network-config-daemon-stcmm        1/1     Running   <span style=color:#ae81ff>2</span>          7d17h   10.6.115.24    worker1.ocp1.r450.org
+</span></span><span style=display:flex><span>sriov-network-config-daemon-wfpnn        1/1     Running   <span style=color:#ae81ff>2</span>          7d17h   10.6.115.23    worker0.ocp1.r450.org
+</span></span><span style=display:flex><span>sriov-network-operator-78f967dfc-q9b7f   1/1     Running   <span style=color:#ae81ff>0</span>          8d      10.128.2.36    master1.ocp1.r450.org
+</span></span></code></pre></div><h3 id=configure-vfs>Configure VFs</h3><p>At this moment we can start with the creation of the VFs on each node that will be used by our workloads later on. The CR to create the VFs is called <code>SriovNetworkNodePolicy</code>. Let&rsquo;s apply a configuration in our cluster as below:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ cat <span style=color:#e6db74>&lt;&lt; EOF| oc create -f -
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>apiVersion: sriovnetwork.openshift.io/v1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>kind: SriovNetworkNodePolicy
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>metadata:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  name: sriov-ens3f1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  namespace: openshift-sriov-network-operator
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>spec:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  deviceType: netdevice
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  isRdma: false
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  nicSelector:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    pfNames:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    - ens3f1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  nodeSelector:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    node-role.kubernetes.io/worker: &#34;&#34;
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  numVfs: 8
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  priority: 10
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  resourceName: sriov_ens3f1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>EOF</span>
+</span></span></code></pre></div><p>Now we can validate it querying the CR <code>sriovNetworkNodeStates</code>.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$oc -n openshift-sriov-network-operator get sriovnetworknodestates.sriovnetwork.openshift.io      
+</span></span><span style=display:flex><span>NAME                    SYNC STATUS   AGE                    
+</span></span><span style=display:flex><span>worker0.ocp1.r450.org   Succeeded     8d                     
+</span></span><span style=display:flex><span>worker1.ocp1.r450.org   Succeeded     8d                     
+</span></span><span style=display:flex><span><span style=color:#f92672>(</span>ocp1<span style=color:#f92672>)[</span>root@core-infra ~<span style=color:#f92672>]</span>$oc -n openshift-sriov-network-operator get sriovnetworknodestates.sriovnetwork.openshift.io worke
+</span></span><span style=display:flex><span>r1.ocp1.r450.org -oyaml                                      
+</span></span><span style=display:flex><span>apiVersion: sriovnetwork.openshift.io/v1                     
+</span></span><span style=display:flex><span>kind: SriovNetworkNodeState                                  
+</span></span><span style=display:flex><span>metadata:                
+</span></span><span style=display:flex><span>  creationTimestamp: <span style=color:#e6db74>&#34;2024-05-30T09:34:38Z&#34;</span>                  
+</span></span><span style=display:flex><span>  generation: <span style=color:#ae81ff>5</span>                                                                                                            
+</span></span><span style=display:flex><span>  name: worker1.ocp1.r450.org                                                                                              
+</span></span><span style=display:flex><span>  namespace: openshift-sriov-network-operator                
+</span></span><span style=display:flex><span>  ownerReferences:                                           
+</span></span><span style=display:flex><span>  - apiVersion: sriovnetwork.openshift.io/v1                                                                               
+</span></span><span style=display:flex><span>    blockOwnerDeletion: true                                                                                               
+</span></span><span style=display:flex><span>    controller: true                                                                                                       
+</span></span><span style=display:flex><span>    kind: SriovNetworkNodePolicy                                                                                           
+</span></span><span style=display:flex><span>    name: default                                                                                                          
+</span></span><span style=display:flex><span>    uid: 4ee856b0-028c-4ab5-8ac8-38a59cd7e350                                                                              
+</span></span><span style=display:flex><span>  resourceVersion: <span style=color:#e6db74>&#34;6204485&#34;</span>                                                                                               
+</span></span><span style=display:flex><span>  uid: fde9f5b3-1276-4470-b9c4-1ad74a512762                  
+</span></span><span style=display:flex><span>spec:                                                        
+</span></span><span style=display:flex><span>  dpConfigVersion: cef32a2c6cbd39dccbe4ec899f3961c4          
+</span></span><span style=display:flex><span>  interfaces:                                                                                                              
+</span></span><span style=display:flex><span>  - name: ens3f0      
+</span></span><span style=display:flex><span>    numVfs: <span style=color:#ae81ff>8</span>                                                
+</span></span><span style=display:flex><span>    pciAddress: 0000:98:00.0
+</span></span><span style=display:flex><span>    vfGroups:               
+</span></span><span style=display:flex><span>    - deviceType: netdevice                                  
+</span></span><span style=display:flex><span>      policyName: sriov-ens3f0                                                                                             
+</span></span><span style=display:flex><span>      resourceName: sriov_ens3f0  
+</span></span><span style=display:flex><span>     vfRange: 0-7
+</span></span><span style=display:flex><span>  - name: ens3f1
+</span></span><span style=display:flex><span>    numVfs: <span style=color:#ae81ff>8</span>
+</span></span><span style=display:flex><span>    pciAddress: 0000:98:00.1
+</span></span><span style=display:flex><span>    vfGroups:
+</span></span><span style=display:flex><span>    - deviceType: netdevice
+</span></span><span style=display:flex><span>      policyName: sriov-ens3f1 
+</span></span><span style=display:flex><span>      resourceName: sriov_ens3f1
+</span></span><span style=display:flex><span>      vfRange: 0-7
+</span></span><span style=display:flex><span>status:
+</span></span><span style=display:flex><span>  interfaces:
+</span></span><span style=display:flex><span>  - Vfs:
+</span></span><span style=display:flex><span>    - deviceID: <span style=color:#e6db74>&#34;1889&#34;</span>                                                                                                     
+</span></span><span style=display:flex><span>      driver: iavf                                                                                                         
+</span></span><span style=display:flex><span>      mac: 26:6a:71:d5:76:98                                                                                               
+</span></span><span style=display:flex><span>      mtu: <span style=color:#ae81ff>1500</span>                                                                                                            
+</span></span><span style=display:flex><span>      name: ens3f1v0                                                                                                       
+</span></span><span style=display:flex><span>      pciAddress: 0000:98:11.0                                                                                             
+</span></span><span style=display:flex><span>      vendor: <span style=color:#e6db74>&#34;8086&#34;</span>                                                                                                       
+</span></span><span style=display:flex><span>      vfID: <span style=color:#ae81ff>0</span>                                                                                                              
+</span></span><span style=display:flex><span>    - deviceID: <span style=color:#e6db74>&#34;1889&#34;</span>                                                                                                     
+</span></span><span style=display:flex><span>      driver: iavf                                                                                                         
+</span></span><span style=display:flex><span>      mac: 5a:9c:12:c5:a9:cb                                                                                               
+</span></span><span style=display:flex><span>      mtu: <span style=color:#ae81ff>1500</span>                                                                                                            
+</span></span><span style=display:flex><span>      name: ens3f1v1                                                                                                       
+</span></span><span style=display:flex><span>      pciAddress: 0000:98:11.1                                                                                             
+</span></span><span style=display:flex><span>      vendor: <span style=color:#e6db74>&#34;8086&#34;</span>                                                                                                       
+</span></span><span style=display:flex><span>      vfID: <span style=color:#ae81ff>1</span>               
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>#####   &lt;PART OF THE OUTPUT OMITTED&gt; </span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    - deviceID: <span style=color:#e6db74>&#34;1889&#34;</span>
+</span></span><span style=display:flex><span>      driver: iavf
+</span></span><span style=display:flex><span>      mac: 5e:e8:dc:b5:28:b6
+</span></span><span style=display:flex><span>      mtu: <span style=color:#ae81ff>1500</span>
+</span></span><span style=display:flex><span>      name: ens3f1v7
+</span></span><span style=display:flex><span>      pciAddress: 0000:98:11.7 
+</span></span><span style=display:flex><span>      vendor: <span style=color:#e6db74>&#34;8086&#34;</span>
+</span></span><span style=display:flex><span>      vfID: <span style=color:#ae81ff>7</span>
+</span></span><span style=display:flex><span>    deviceID: 159b
+</span></span><span style=display:flex><span>    driver: ice
+</span></span><span style=display:flex><span>    eSwitchMode: legacy
+</span></span><span style=display:flex><span>    linkSpeed: <span style=color:#ae81ff>25000</span> Mb/s
+</span></span><span style=display:flex><span>    linkType: ETH
+</span></span><span style=display:flex><span>    mac: b4:83:51:00:66:a7
+</span></span><span style=display:flex><span>    mtu: <span style=color:#ae81ff>1500</span>
+</span></span><span style=display:flex><span>    name: ens3f1
+</span></span><span style=display:flex><span>    numVfs: <span style=color:#ae81ff>8</span>
+</span></span><span style=display:flex><span>    pciAddress: 0000:98:00.1
+</span></span><span style=display:flex><span>    totalvfs: <span style=color:#ae81ff>128</span>
+</span></span><span style=display:flex><span>    vendor: <span style=color:#e6db74>&#34;8086&#34;</span>
+</span></span><span style=display:flex><span>  syncStatus: Succeeded
+</span></span></code></pre></div><p>The manifest applied above will create 8 VFs in the device <code>ens3f1</code> on the nodes with label <code>worker</code>. So, let&rsquo;s take a look if that happened in the node.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$oc debug node/worker1.ocp1.r450.org
+</span></span><span style=display:flex><span>Starting pod/worker1ocp1r450org-debug-j5mvd ...
+</span></span><span style=display:flex><span>To use host binaries, run <span style=color:#e6db74>`</span>chroot /host<span style=color:#e6db74>`</span>
+</span></span><span style=display:flex><span>Pod IP: 10.6.115.24
+</span></span><span style=display:flex><span>If you don<span style=color:#960050;background-color:#1e0010>&#39;</span>t see a command prompt, try pressing enter.
+</span></span><span style=display:flex><span>sh-4.4# chroot /host
+</span></span><span style=display:flex><span>sh-5.1# ip link show ens3f1
+</span></span><span style=display:flex><span>7: ens3f1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span style=color:#ae81ff>1500</span> qdisc mq state UP mode DEFAULT group default qlen <span style=color:#ae81ff>1000</span>
+</span></span><span style=display:flex><span>    link/ether b4:83:51:00:66:a7 brd ff:ff:ff:ff:ff:ff
+</span></span><span style=display:flex><span>    vf <span style=color:#ae81ff>0</span>     link/ether aa:94:1c:3b:6c:79 brd ff:ff:ff:ff:ff:ff, spoof checking on, link-state auto, trust off
+</span></span><span style=display:flex><span>    vf <span style=color:#ae81ff>1</span>     link/ether 9e:60:c6:85:dc:7b brd ff:ff:ff:ff:ff:ff, spoof checking on, link-state auto, trust off
+</span></span><span style=display:flex><span>    vf <span style=color:#ae81ff>2</span>     link/ether 36:28:fe:31:0a:72 brd ff:ff:ff:ff:ff:ff, spoof checking on, link-state auto, trust off
+</span></span><span style=display:flex><span>    vf <span style=color:#ae81ff>3</span>     link/ether f2:1b:59:70:3b:f3 brd ff:ff:ff:ff:ff:ff, spoof checking on, link-state auto, trust off
+</span></span><span style=display:flex><span>    vf <span style=color:#ae81ff>4</span>     link/ether f6:42:ee:0f:73:79 brd ff:ff:ff:ff:ff:ff, spoof checking on, link-state auto, trust off
+</span></span><span style=display:flex><span>    vf <span style=color:#ae81ff>5</span>     link/ether da:0e:29:9e:9c:bb brd ff:ff:ff:ff:ff:ff, spoof checking on, link-state auto, trust off
+</span></span><span style=display:flex><span>    vf <span style=color:#ae81ff>6</span>     link/ether 56:f5:4d:b3:0e:0e brd ff:ff:ff:ff:ff:ff, spoof checking on, link-state auto, trust off
+</span></span><span style=display:flex><span>    vf <span style=color:#ae81ff>7</span>     link/ether ae:6b:93:a1:ee:b8 brd ff:ff:ff:ff:ff:ff, spoof checking on, link-state auto, trust off
+</span></span><span style=display:flex><span>    altname enp152s0f1
+</span></span><span style=display:flex><span>sh-5.1# 
+</span></span></code></pre></div><p>As you can see in the capture within the PF <code>ens3f1</code> there are 8 VFs. So it worked as expected, great!</p><h3 id=deploy-workloads-that-use-vfs-as-second-interface>Deploy workloads that use VFs as second interface</h3><p>By default Kubernetes and OpenShift, when create a new pod, this is attached to the default CNI plugin cluster network, which is an internal network. In order to allow to add a second network interface to the pods, there is a CNI plugin called Multus, which comes installed by default in OpenShift.</p><p>Multus allow to add a second interface to our pods based in the contend of a CR called <code>NetworkAttachmentDefinition</code>. Once this CR is configured, in the pod definition it is needed only some annotations to add the second network interface. For SR-IOV there is a CR called <code>SriovNetwork</code> which create the <code>NetworkAttachmentDefinition</code> automatically. In the below capture we are going to create a new <code>SriovNetwork</code> and afterwards a pod that will use that.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ cat <span style=color:#e6db74>&lt;&lt; EOF| oc create -f -
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>apiVersion: sriovnetwork.openshift.io/v1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>kind: SriovNetwork
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>metadata:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  annotations:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    operator.sriovnetwork.openshift.io/last-network-namespace: openshift-sriov-network-operator
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  name: sriov-ens3f1-vlan140
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  namespace: openshift-sriov-network-operator
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>spec:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  networkNamespace: openshift-sriov-network-operator
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  resourceName: sriov_ens3f1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  vlan: 140
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>EOF</span>
+</span></span></code></pre></div><p>Once applied the <code>SriovNetwork</code> CR, let&rsquo;s check if the <code>NetworkAttachmentDefinition</code> is created as well.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$oc -n openshift-sriov-network-operator get network-attachment-definitions
+</span></span><span style=display:flex><span>NAME                   AGE
+</span></span><span style=display:flex><span>sriov-ens3f1-vlan140   8d
+</span></span></code></pre></div><p>Now everything is ready to run a pod that use a VF created by SR-IOV operator. The important part of the below manifest is the annotation <code>k8s.v1.cni.cncf.io/networks</code>. The value of this annotation is the name of the <code>SriovNetwork</code> created before.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ cat <span style=color:#e6db74>&lt;&lt; EOF| oc create -f -
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>apiVersion: v1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>kind: Pod
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>metadata:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  name: sample-pod
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  namespace: openshift-sriov-network-operator
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  annotations:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    k8s.v1.cni.cncf.io/networks: sriov-ens3f1-vlan140
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>spec:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  containers:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  - name: sample-container
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    image: registry.access.redhat.com/ubi9/ubi@sha256:d31d3e5e92c0c47277c5011c0326b285ab7ae627eff036133be1dccc4208004d
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    command: [&#34;sleep&#34;, &#34;infinity&#34;]
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>EOF</span>
+</span></span></code></pre></div><p>Let&rsquo;s see if our pod have a second interface connected.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$oc -n openshift-sriov-network-operator rsh sample-pod
+</span></span><span style=display:flex><span>sh-5.1# ip a s
+</span></span><span style=display:flex><span>1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu <span style=color:#ae81ff>65536</span> qdisc noqueue state UNKNOWN group default qlen <span style=color:#ae81ff>1000</span>
+</span></span><span style=display:flex><span>    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+</span></span><span style=display:flex><span>    inet 127.0.0.1/8 scope host lo
+</span></span><span style=display:flex><span>       valid_lft forever preferred_lft forever
+</span></span><span style=display:flex><span>    inet6 ::1/128 scope host 
+</span></span><span style=display:flex><span>       valid_lft forever preferred_lft forever
+</span></span><span style=display:flex><span>2: eth0@if729: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span style=color:#ae81ff>8900</span> qdisc noqueue state UP group default 
+</span></span><span style=display:flex><span>    link/ether 0a:58:0a:82:00:cc brd ff:ff:ff:ff:ff:ff link-netnsid <span style=color:#ae81ff>0</span>
+</span></span><span style=display:flex><span>    inet 10.130.0.204/23 brd 10.130.1.255 scope global eth0
+</span></span><span style=display:flex><span>       valid_lft forever preferred_lft forever
+</span></span><span style=display:flex><span>    inet6 fe80::858:aff:fe82:cc/64 scope link 
+</span></span><span style=display:flex><span>       valid_lft forever preferred_lft forever
+</span></span><span style=display:flex><span>31: net1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span style=color:#ae81ff>1500</span> qdisc mq state UP group default qlen <span style=color:#ae81ff>1000</span>
+</span></span><span style=display:flex><span>    link/ether 06:81:10:9d:9b:38 brd ff:ff:ff:ff:ff:ff
+</span></span><span style=display:flex><span>    altname enp152s0f1v4
+</span></span><span style=display:flex><span>    inet6 fe80::481:10ff:fe9d:9b38/64 scope link 
+</span></span><span style=display:flex><span>       valid_lft forever preferred_lft forever
+</span></span></code></pre></div><p>Awesome!! One last thing, let&rsquo;s check the pod definition to review the mutations done by the SR-IOV operator.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$oc -n openshift-sriov-network-operator get pod sample-pod -oyaml                       <span style=color:#f92672>[</span>109/1961<span style=color:#f92672>]</span>
+</span></span><span style=display:flex><span>apiVersion: v1                                               
+</span></span><span style=display:flex><span>kind: Pod                 
+</span></span><span style=display:flex><span>metadata:                                                    
+</span></span><span style=display:flex><span>  annotations:         
+</span></span><span style=display:flex><span>    k8s.ovn.org/pod-networks: <span style=color:#e6db74>&#39;{&#34;default&#34;:{&#34;ip_addresses&#34;:[&#34;10.130.0.204/23&#34;],&#34;mac_address&#34;:&#34;0a:58:0a:82:00:cc&#34;,&#34;gateway_ip
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>s&#34;:[&#34;10.130.0.1&#34;],&#34;routes&#34;:[{&#34;dest&#34;:&#34;10.128.0.0/14&#34;,&#34;nextHop&#34;:&#34;10.130.0.1&#34;},{&#34;dest&#34;:&#34;172.30.0.0/16&#34;,&#34;nextHop&#34;:&#34;10.130.0.1&#34;}
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>,{&#34;dest&#34;:&#34;100.64.0.0/16&#34;,&#34;nextHop&#34;:&#34;10.130.0.1&#34;}],&#34;ip_address&#34;:&#34;10.130.0.204/23&#34;,&#34;gateway_ip&#34;:&#34;10.130.0.1&#34;}}&#39;</span>
+</span></span><span style=display:flex><span>    k8s.v1.cni.cncf.io/network-status: |-                    
+</span></span><span style=display:flex><span>      <span style=color:#f92672>[{</span>                                                     
+</span></span><span style=display:flex><span>          <span style=color:#e6db74>&#34;name&#34;</span>: <span style=color:#e6db74>&#34;ovn-kubernetes&#34;</span>,
+</span></span><span style=display:flex><span>          <span style=color:#e6db74>&#34;interface&#34;</span>: <span style=color:#e6db74>&#34;eth0&#34;</span>,                                                                                             
+</span></span><span style=display:flex><span>          <span style=color:#e6db74>&#34;ips&#34;</span>: <span style=color:#f92672>[</span>                                           
+</span></span><span style=display:flex><span>              <span style=color:#e6db74>&#34;10.130.0.204&#34;</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>]</span>,                                                 
+</span></span><span style=display:flex><span>          <span style=color:#e6db74>&#34;mac&#34;</span>: <span style=color:#e6db74>&#34;0a:58:0a:82:00:cc&#34;</span>,                        
+</span></span><span style=display:flex><span>          <span style=color:#e6db74>&#34;default&#34;</span>: true,                                   
+</span></span><span style=display:flex><span>          <span style=color:#e6db74>&#34;dns&#34;</span>: <span style=color:#f92672>{}</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>}</span>,<span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>          <span style=color:#e6db74>&#34;name&#34;</span>: <span style=color:#e6db74>&#34;openshift-sriov-network-operator/sriov-ens3f1-vlan140&#34;</span>,
+</span></span><span style=display:flex><span>          <span style=color:#e6db74>&#34;interface&#34;</span>: <span style=color:#e6db74>&#34;net1&#34;</span>, 
+</span></span><span style=display:flex><span>          <span style=color:#e6db74>&#34;mac&#34;</span>: <span style=color:#e6db74>&#34;06:81:10:9d:9b:38&#34;</span>,
+</span></span><span style=display:flex><span>          <span style=color:#e6db74>&#34;dns&#34;</span>: <span style=color:#f92672>{}</span>,
+</span></span><span style=display:flex><span>          <span style=color:#e6db74>&#34;device-info&#34;</span>: <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>              <span style=color:#e6db74>&#34;type&#34;</span>: <span style=color:#e6db74>&#34;pci&#34;</span>,
+</span></span><span style=display:flex><span>              <span style=color:#e6db74>&#34;version&#34;</span>: <span style=color:#e6db74>&#34;1.1.0&#34;</span>,
+</span></span><span style=display:flex><span>              <span style=color:#e6db74>&#34;pci&#34;</span>: <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>                  <span style=color:#e6db74>&#34;pci-address&#34;</span>: <span style=color:#e6db74>&#34;0000:98:11.4&#34;</span>
+</span></span><span style=display:flex><span>              <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>}]</span>
+</span></span><span style=display:flex><span>    k8s.v1.cni.cncf.io/networks: sriov-ens3f1-vlan140
+</span></span><span style=display:flex><span>    openshift.io/scc: anyuid
+</span></span><span style=display:flex><span>  creationTimestamp: <span style=color:#e6db74>&#34;2024-06-07T10:56:18Z&#34;</span>
+</span></span><span style=display:flex><span>  name: sample-pod
+</span></span><span style=display:flex><span>  namespace: openshift-sriov-network-operator
+</span></span><span style=display:flex><span>  resourceVersion: <span style=color:#e6db74>&#34;6881260&#34;</span>
+</span></span><span style=display:flex><span>  uid: 7464bec1-130c-4bc2-bfac-71786f485d78
+</span></span><span style=display:flex><span>spec:
+</span></span><span style=display:flex><span>  containers:
+</span></span><span style=display:flex><span>  - command:
+</span></span><span style=display:flex><span>    - sleep
+</span></span><span style=display:flex><span>    - infinity
+</span></span><span style=display:flex><span>    image: registry.access.redhat.com/ubi9/ubi@sha256:d31d3e5e92c0c47277c5011c0326b285ab7ae627eff036133be1dccc4208004d
+</span></span><span style=display:flex><span>    imagePullPolicy: IfNotPresent
+</span></span><span style=display:flex><span>    name: sample-container
+</span></span><span style=display:flex><span>    resources:
+</span></span><span style=display:flex><span>      limits:
+</span></span><span style=display:flex><span>        openshift.io/sriov_ens3f1: <span style=color:#e6db74>&#34;1&#34;</span>
+</span></span><span style=display:flex><span>      requests:
+</span></span><span style=display:flex><span>        openshift.io/sriov_ens3f1: <span style=color:#e6db74>&#34;1&#34;</span>
+</span></span><span style=display:flex><span>    securityContext:
+</span></span><span style=display:flex><span>      capabilities:
+</span></span><span style=display:flex><span>        drop:
+</span></span><span style=display:flex><span>        - MKNOD
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>#### OUTPUT OMITTED </span>
+</span></span></code></pre></div><p>Take a look in the above capture to the content of the annotations, some additional ones have been added automatically, and also some resource limits. That&rsquo;s the part handle by the Network Resource Injector and the Admission Controller WebHook.</p><h2 id=troubleshooting>Troubleshooting</h2><p>One of the first steps for troubleshooting the SR-IOV configurations is to validate, as was mentioned previously, the CR <code>SriovNetworkNodeStates</code>. The output of this CR bring us a lot of information of the current devices and their configurations.</p><p>At a lower level, we can check the node it self. For instance we can take a look if the number of VFs has been set as expected.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>sh-5.1# cat /sys/class/pci_bus/0000<span style=color:#ae81ff>\:</span>98/device/0000<span style=color:#ae81ff>\:</span>98<span style=color:#ae81ff>\:</span>00.0/sriov_numvfs 
+</span></span><span style=display:flex><span><span style=color:#ae81ff>8</span>
+</span></span></code></pre></div><p>Another important thing that we can check is the current driver version used for the NIC.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>sh-5.1# ethtool -i ens3f1
+</span></span><span style=display:flex><span>driver: ice
+</span></span><span style=display:flex><span>version: 5.14.0-284.55.1.rt14.340.el9_2.
+</span></span><span style=display:flex><span>firmware-version: 4.40 0x8001ba1e 22.5.7
+</span></span><span style=display:flex><span>expansion-rom-version: 
+</span></span><span style=display:flex><span>bus-info: 0000:98:00.1
+</span></span><span style=display:flex><span>supports-statistics: yes
+</span></span><span style=display:flex><span>supports-test: yes
+</span></span><span style=display:flex><span>supports-eeprom-access: yes
+</span></span><span style=display:flex><span>supports-register-dump: yes
+</span></span><span style=display:flex><span>supports-priv-flags: yes
+</span></span></code></pre></div><h2 id=conclusions>Conclusions</h2><p>SR-IOV allow to virtualize network interface at hardware level, allowing a closer iteration from the workload running in a container or VM. Currently SR-IOV is supported on OpenShift via an operator which simplify the configuration of the VFs and the attachment of these VFs to our workloads.</p><h2 id=resources>Resources</h2><ul><li><p>SR-IOV from <a href=https://docs.openshift.com/container-platform/4.14/networking/hardware_networks/about-sriov.html>official OpenShift documentation</a></p></li><li><p>Definition of SR-IOV from <a href=https://en.wikipedia.org/wiki/Single-root_input/output_virtualization>Wikipedia</a></p></li><li><p>Some articles from different manufactures:</p><ul><li><a href=https://www.juniper.net/documentation/us/en/software/nce/nce-189-vsrx-sr-iov-ha-10g-deployment/topics/concept/disaggregated-junos-sr-iov.html>Juniper</a></li><li><a href=https://docs.vmware.com/en/VMware-Telco-Cloud-Platform/3.0/telco-cloud-platform-5g-edition-data-plane-performance-tuning-guide/GUID-4B328085-63C1-402E-803F-6D710C5C3AAE.html>VMWare</a></li><li><a href=https://techdocs.broadcom.com/us/en/storage-and-ethernet-connectivity/ethernet-nic-controllers/bcm957xxx/adapters/introduction/features/sr-iov.html>Broadcom</a></li><li><a href=https://www.intel.com/content/www/us/en/developer/articles/technical/configure-sr-iov-network-virtual-functions-in-linux-kvm.html>Intel</a></li></ul></li><li><p><a href=https://www.dpdk.org/about/>DPDK site</a></p></li><li><p><a href=https://docs.openshift.com/container-platform/4.14/networking/hardware_networks/using-dpdk-and-rdma.html>Use DPDK library to work with SR-IOV hardware</a>.</p></li></ul></div><div class=post-footer></div></article></main></body></html>
