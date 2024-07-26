@@ -7,21 +7,32 @@ draft: false
 ## Sumary
 ---
 
-> I’m an open source enthusiast with more than 20 years of experience working with Linux. In the last years I have been focusing on Kubernetes, Cloud Computing (AWS, GCP, Azure), DevOps, MLOps (DevOps for Artificial Intelligence) and SecDevOps. Also I'm  coding a bit with Golang.
+> I’m an open source enthusiast with more than 20 years of experience working with Linux. In the last years I have been focusing on Kubernetes, Cloud Computing (AWS, GCP, Azure), DevOps, MLOps (DevOps for Artificial Intelligence) and SecDevOps. I also write some code in Golang and Python.
 >
-> In this blog I will publish technical articles regarding Open Source, Linux, Kubernetes, Cloud Computing, Edge, DevOps, MLOps, SecDevOps, GitOps.. whatever OPS!! All the content and opinions in here are my own.
+> In this blog I will publish technical articles, cheat sheets and procedures, regarding Open Source, Linux, Kubernetes, Cloud Computing, Edge, DevOps, MLOps, SecDevOps, GitOps.. whatever OPS!! All the content and opinions in here are my own.
 
 
 ## Experience
 ---
 
 ### Red Hat
-> ##### Senior Software Engineer (August 2021 - Currently)Full Remote Madrid (SPAIN)
+> ##### Senior Software Engineer (August 2021 - Currently) Full Remote Madrid (SPAIN)
 >
-> Helping some partners to adapt their Telco 5G solution to run on top of OpenShift and working on run OpenShift at edge.
+> Most of the Telco actors are working hard to deploy 5G infrastructure based on cloud native software. I'm currently working on supporting Red Hat partners on Telco area, to deploy CNF workloads on top of OpenShift. For that the most important technologies used are:
+>  * **Red Hat Advanced Cluster Management (ACM)**, used by **Zero Touch Provisioning (ZTP)**, to deploy and manage multiple clusters from a central hub, using **GitOps** methodology.
+>  * Deploy and configuration the important **OpenShift Operators** for Telco, manged by OLM:
+>    * **PerformanceProfile**
+>    * **SR-IOV**
+>    * **OpenShift Data Foundation (ODF)**
+>    * **MetalLB**
+>    * **NMState**
+>  * Understanding different OpenShift deployments types
+>    * **Single Node OpenShift (SNO**), mainly used by RAN on the edge and far edge
+>    * **Compact Clusters**, mainly used on edge for vCU on RAN
+>    * **Multi Node OpenShift (MNO)**, mainly used for 5G Core 
 
 ### Intelygenz S.A.  
-> ##### DevOps for A.I. (June 2018 - July 2021) Madrid (SPAIN)
+> ##### DevOps | MLOps Lead (June 2018 - July 2021) Madrid (SPAIN)
 >
 > Intelygenz started an area of A.I. and they needed someone to help with
 > the infrastructure in order to allow the Data Scientists training the
@@ -31,7 +42,7 @@ draft: false
 > for AI training, understand the culture of MLOps and code a bit in
 > Golang,
 > 
-> ##### DevOps Lead (November 2015 - June 2018) Austin TX (U.S.) and Madrid (SPAIN)
+> ##### DevOps Lead | SRE (November 2015 - June 2018) Austin TX (U.S.) and Madrid (SPAIN)
 > 
 > I moved to the U.S. (Austin, TX) for a year. The most significant project
 > was to start from scratch a 100% online bank for small business. Where I
@@ -68,12 +79,15 @@ draft: false
 
 ## Certifications
 ---
+
+You can find my verified certifications achievements in [Credly](https://www.credly.com/users/daniel-chavero-gaspar) 
+
+* **RHCE** Red Hat Certified Engineer (2024)
 * **RHCOA** Red Hat Certified OpenShift Administrator (2023)
 * **RHCSA** Red Hat Certified System Administrator (2023)
 * **CKS** Certified Kubernetes Security (2022)
-* **CKA** Certified Kubernetes Administrator (2019)
-* **ACSAA** AWS Certified Solutions Architect Associate (2017)
-* **VCP5** VMware Certified Professional en version 5.0 (2013)
-* **ACTC** Apple Certified Technical Coordinator MacOSX 10.7 Lion (2012)
-* **ITIL V3** ITIL V3 Foundations (2011)
-* **NETASQ**NETASQ Administrator Version 8.0 (2010)
+* **CKA** Certified Kubernetes Administrator (2019) -- *Expired*
+* **ACSAA** AWS Certified Solutions Architect Associate (2017) -- *Expired*
+* **VCP5** VMware Certified Professional en version 5.0 (2013) -- *Expired*
+* **ITIL V3** ITIL V3 Foundations (2011) -- *Expired*
+* **NETASQ**NETASQ Administrator Version 8.0 (2010) -- *Expired*
