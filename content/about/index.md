@@ -81,8 +81,9 @@ draft: false
 
 You can find my verified certifications achievements in [Credly](https://www.credly.com/users/daniel-chavero-gaspar) 
 
+* Red Hat Certified Specialist in **OpenShift AI** (2024)
 * **RHCE** Red Hat Certified Engineer (2024)
-* **RHCOA** Red Hat Certified OpenShift Administrator (2023)
+* Red Hat Certified **OpenShift Administrator** (2023)
 * **RHCSA** Red Hat Certified System Administrator (2023)
 * **CKS** Certified Kubernetes Security (2022)
 * **CKA** Certified Kubernetes Administrator (2019) -- *Expired*
