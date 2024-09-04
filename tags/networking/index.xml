@@ -1,1 +1,47 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Networking on Daniel Ops</title><link>https://danielchg.github.io/tags/networking/</link><description>Recent content in Networking on Daniel Ops</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Wed, 05 Jun 2024 15:59:54 +0200</lastBuildDate><atom:link href="https://danielchg.github.io/tags/networking/index.xml" rel="self" type="application/rss+xml"/><item><title>SR-IOV on OpenShift</title><link>https://danielchg.github.io/posts/sriov-on-openshift/</link><pubDate>Wed, 05 Jun 2024 15:59:54 +0200</pubDate><guid>https://danielchg.github.io/posts/sriov-on-openshift/</guid><description>Table of Contents Table of Contents Introduction What is SR-IOV Describe environment used for this article How to use it on OpenShift Install SR-IOV operator Validate SR-IOV support on the NIC Concepts and configurations Configure VFs Deploy workloads that use VFs as second interface Troubleshooting Conclusions Resources Introduction At the moment of this writing, the big actors on 5G, are making a huge effort to transform their workloads to be deployed as cloud native apps.</description></item><item><title>How to configure dnsmasq for dual stack ipv4/ipv6</title><link>https://danielchg.github.io/posts/dnsmasq-for-dualstack/</link><pubDate>Tue, 03 Oct 2023 13:19:23 +0200</pubDate><guid>https://danielchg.github.io/posts/dnsmasq-for-dualstack/</guid><description>Table of Contents Table of Contents Scenario Dnsmasq Installation Configuration Common config per interface DHCP options for ipv4 DHCP options for ipv6 IP reservation DNS resolution for dual stack DNS resolution for wildcard subdomains Troubleshooting Summary Scenario Nowadays it is more and more common to start working with networks that support ipv6, in order to adapt our environment to the new version of the ip stack. Also we want to keep our ipv4 configuration for legacy applications.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Networking on Daniel Ops</title><link>https://danielchg.github.io/tags/networking/</link><description>Recent content in Networking on Daniel Ops</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Wed, 05 Jun 2024 15:59:54 +0200</lastBuildDate><atom:link href="https://danielchg.github.io/tags/networking/index.xml" rel="self" type="application/rss+xml"/><item><title>SR-IOV on OpenShift</title><link>https://danielchg.github.io/posts/sriov-on-openshift/</link><pubDate>Wed, 05 Jun 2024 15:59:54 +0200</pubDate><guid>https://danielchg.github.io/posts/sriov-on-openshift/</guid><description>&lt;h1 id="table-of-contents">Table of Contents&lt;/h1>
+&lt;ul>
+&lt;li>&lt;a href="#table-of-contents">Table of Contents&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#introduction">Introduction&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#what-is-sr-iov">What is SR-IOV&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#describe-environment-used-for-this-article">Describe environment used for this article&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#how-to-use-it-on-openshift">How to use it on OpenShift&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#install-sr-iov-operator">Install SR-IOV operator&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#validate-sr-iov-support-on-the-nic">Validate SR-IOV support on the NIC&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#concepts-and-configurations">Concepts and configurations&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#configure-vfs">Configure VFs&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#deploy-workloads-that-use-vfs-as-second-interface">Deploy workloads that use VFs as second interface&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#troubleshooting">Troubleshooting&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#conclusions">Conclusions&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#resources">Resources&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="introduction">Introduction&lt;/h2>
+&lt;p>At the moment of this writing, the big actors on 5G, are making a huge effort to transform their workloads to be deployed as cloud native apps. Part of this effort is to run those workloads as containers on top of a platform based on Kubernetes.&lt;/p></description></item><item><title>How to configure dnsmasq for dual stack ipv4/ipv6</title><link>https://danielchg.github.io/posts/dnsmasq-for-dualstack/</link><pubDate>Tue, 03 Oct 2023 13:19:23 +0200</pubDate><guid>https://danielchg.github.io/posts/dnsmasq-for-dualstack/</guid><description>&lt;h1 id="table-of-contents">Table of Contents&lt;/h1>
+&lt;ul>
+&lt;li>&lt;a href="#table-of-contents">Table of Contents&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#scenario">Scenario&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#dnsmasq">Dnsmasq&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#installation">Installation&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#configuration">Configuration&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#common-config-per-interface">Common config per interface&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#dhcp-options-for-ipv4">DHCP options for ipv4&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#dhcp-options-for-ipv6">DHCP options for ipv6&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#ip-reservation">IP reservation&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#dns-resolution-for-dual-stack">DNS resolution for dual stack&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#dns-resolution-for-wildcard-subdomains">DNS resolution for wildcard subdomains&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#troubleshooting">Troubleshooting&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#summary">Summary&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h1 id="scenario">Scenario&lt;/h1>
+&lt;p>Nowadays it is more and more common to start working with networks that support ipv6, in order to adapt our environment to the new version of the ip stack. Also we want to keep our ipv4 configuration for legacy applications. In this article I&amp;rsquo;m going to explain how to configure a DHCP and a DNS server to have an environment with support of both ip stacks. This configuration is commonly named dual stack.&lt;/p></description></item></channel></rss>

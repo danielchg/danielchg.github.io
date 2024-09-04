@@ -1,1 +1,27 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Telco on Daniel Ops</title><link>https://danielchg.github.io/tags/telco/</link><description>Recent content in Telco on Daniel Ops</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Wed, 05 Jun 2024 15:59:54 +0200</lastBuildDate><atom:link href="https://danielchg.github.io/tags/telco/index.xml" rel="self" type="application/rss+xml"/><item><title>SR-IOV on OpenShift</title><link>https://danielchg.github.io/posts/sriov-on-openshift/</link><pubDate>Wed, 05 Jun 2024 15:59:54 +0200</pubDate><guid>https://danielchg.github.io/posts/sriov-on-openshift/</guid><description>Table of Contents Table of Contents Introduction What is SR-IOV Describe environment used for this article How to use it on OpenShift Install SR-IOV operator Validate SR-IOV support on the NIC Concepts and configurations Configure VFs Deploy workloads that use VFs as second interface Troubleshooting Conclusions Resources Introduction At the moment of this writing, the big actors on 5G, are making a huge effort to transform their workloads to be deployed as cloud native apps.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Telco on Daniel Ops</title><link>https://danielchg.github.io/tags/telco/</link><description>Recent content in Telco on Daniel Ops</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Wed, 05 Jun 2024 15:59:54 +0200</lastBuildDate><atom:link href="https://danielchg.github.io/tags/telco/index.xml" rel="self" type="application/rss+xml"/><item><title>SR-IOV on OpenShift</title><link>https://danielchg.github.io/posts/sriov-on-openshift/</link><pubDate>Wed, 05 Jun 2024 15:59:54 +0200</pubDate><guid>https://danielchg.github.io/posts/sriov-on-openshift/</guid><description>&lt;h1 id="table-of-contents">Table of Contents&lt;/h1>
+&lt;ul>
+&lt;li>&lt;a href="#table-of-contents">Table of Contents&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#introduction">Introduction&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#what-is-sr-iov">What is SR-IOV&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#describe-environment-used-for-this-article">Describe environment used for this article&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#how-to-use-it-on-openshift">How to use it on OpenShift&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#install-sr-iov-operator">Install SR-IOV operator&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#validate-sr-iov-support-on-the-nic">Validate SR-IOV support on the NIC&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#concepts-and-configurations">Concepts and configurations&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#configure-vfs">Configure VFs&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#deploy-workloads-that-use-vfs-as-second-interface">Deploy workloads that use VFs as second interface&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#troubleshooting">Troubleshooting&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#conclusions">Conclusions&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#resources">Resources&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="introduction">Introduction&lt;/h2>
+&lt;p>At the moment of this writing, the big actors on 5G, are making a huge effort to transform their workloads to be deployed as cloud native apps. Part of this effort is to run those workloads as containers on top of a platform based on Kubernetes.&lt;/p></description></item></channel></rss>
