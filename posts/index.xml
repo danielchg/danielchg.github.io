@@ -1,4 +1,36 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Daniel Ops</title><link>https://danielchg.github.io/posts/</link><description>Recent content in Posts on Daniel Ops</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Tue, 02 Jul 2024 11:16:02 +0200</lastBuildDate><atom:link href="https://danielchg.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Tmux Cheatsheet</title><link>https://danielchg.github.io/posts/tmux-cheatsheet/</link><pubDate>Tue, 02 Jul 2024 11:16:02 +0200</pubDate><guid>https://danielchg.github.io/posts/tmux-cheatsheet/</guid><description>&lt;h1 id="table-of-contents">Table of Contents&lt;/h1>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Daniel Ops</title><link>https://danielchg.github.io/posts/</link><description>Recent content in Posts on Daniel Ops</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Thu, 29 Aug 2024 15:50:25 +0200</lastBuildDate><atom:link href="https://danielchg.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>OpenShift EUS-to-EUS Upgrade</title><link>https://danielchg.github.io/posts/openshift-eus-to-eus-upgrade/</link><pubDate>Thu, 29 Aug 2024 15:50:25 +0200</pubDate><guid>https://danielchg.github.io/posts/openshift-eus-to-eus-upgrade/</guid><description>&lt;h1 id="table-of-contents">Table of Contents&lt;/h1>
+&lt;ul>
+&lt;li>&lt;a href="#table-of-contents">Table of Contents&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#introduction">Introduction&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#what-are-eus-versions">What are EUS versions&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#understanding-the-openshift-life-cycle-management">Understanding the OpenShift life cycle management&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#environment-used-for-this-article">Environment used for this article&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#upgrade-procedure">Upgrade procedure&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#inspect-the-current-version">Inspect the current version&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#update-olm-operators-from-initial-version">Update OLM operators from initial version&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#update-channel">Update channel&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#check-upgrade-path">Check upgrade path&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#pause-worker-machine-config-pool">Pause worker Machine Config Pool&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#update-control-plane-to-intermediate-version">Update control plane to intermediate version&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#update-olm-operators-in-intermediate-version">Update OLM Operators in intermediate version&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#acknowledge-of-changes-between-kubernetes-apis">Acknowledge of changes between Kubernetes APIs&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#upgrade-control-plane-to-target-version">Upgrade control plane to target version&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#upgrade-olm-operators-to-target-version">Upgrade OLM Operators to target version&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#unpause-worker-mcp">Unpause worker MCP&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#summary">Summary&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#resources">Resources&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="introduction">Introduction&lt;/h2>
+&lt;p>This article tries to cover the understanding of OpenShift EUS versions, and how to upgrade a cluster from one EUS version to the next one in a detailed procedure.&lt;/p></description></item><item><title>Tmux Cheatsheet</title><link>https://danielchg.github.io/posts/tmux-cheatsheet/</link><pubDate>Tue, 02 Jul 2024 11:16:02 +0200</pubDate><guid>https://danielchg.github.io/posts/tmux-cheatsheet/</guid><description>&lt;h1 id="table-of-contents">Table of Contents&lt;/h1>
 &lt;ul>
 &lt;li>&lt;a href="#table-of-contents">Table of Contents&lt;/a>
 &lt;ul>
