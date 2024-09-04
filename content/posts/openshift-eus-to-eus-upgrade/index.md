@@ -2,7 +2,7 @@
 title: "OpenShift EUS-to-EUS Upgrade"
 date: 2024-08-29T15:50:25+02:00
 tags: [OpenShift]
-draft: true
+draft: false
 ---
 
 # Table of Contents
@@ -548,7 +548,7 @@ node/worker1.ocp1.r450.org   Ready    worker                 20h   v1.29.7+4510e
 
 So that's it, we have our cluster upgraded to 4.16.8. Also we can review the Web Console on the left menu **Administration > Cluster Settings**
 
-![Upgrade path](/eus-pic-4.png)
+![Upgrade path](/eus-pic-5.png)
 
 ## Summary 
 
@@ -560,3 +560,4 @@ It is important to highlight how OpenShift helps to upgrade a cluster in a more 
 
 * [Official OpenShift documentation, EUS to EUS update](https://docs.openshift.com/container-platform/4.16/updating/updating_a_cluster/eus-eus-update.html)
 * [Upgrade Path](https://access.redhat.com/labs/ocpupgradegraph/update_path?channel=eus-4.16&arch=x86_64&is_show_hot_fix=false&current_ocp_version=4.14.16&target_ocp_version=4.16.8)
+* [Life Cycle Policy](https://access.redhat.com/support/policy/updates/openshift)
