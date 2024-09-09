@@ -2,6 +2,7 @@ baseURL = 'https://danielchg.github.io/'
 languageCode = 'en-us'
 title = 'Daniel Ops'
 theme = "m10c"
+googleAnalytics = "G-HN2EZD0Q8J"
 
 [params]
   author = 'Daniel Chavero Gaspar'
@@ -46,3 +47,4 @@ theme = "m10c"
   icon = 'linkedin'
   name = 'linkedin'
   url = 'https://www.linkedin.com/in/daniel-chavero-gaspar-19107613/'
+
