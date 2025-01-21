@@ -7,7 +7,7 @@ googleAnalytics = "G-HN2EZD0Q8J"
 [params]
   author = 'Daniel Chavero Gaspar'
   description = 'A blog about whatever OPS!!'
-  avatar = 'login-pic.jpg'
+  avatar = 'circuit-logo2.jpg'
   menu_item_separator = '|'
 
 [taxonomies]
