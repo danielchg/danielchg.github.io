@@ -15,6 +15,14 @@ draft: false
 ---
 
 ### Red Hat
+> ##### Principal Software Engineer (November 2024 - Currently) Full Remote Madrid (SPAIN)
+>
+> * Primary engineer in relation with a Telco partner. Introducing  new product features to the partner to be implemented in the final solution.
+> * Take architecture decisions to be added in the Blueprint.
+> * Involved in the LCM of OpenShift using ZTP.
+> * Mentoring to Jr. mates in the team.
+> 
+
 > ##### Senior Software Engineer (August 2021 - Currently) Full Remote Madrid (SPAIN)
 >
 > Most of the Telco actors are working hard to deploy 5G infrastructure based on cloud native software. I'm currently working on supporting Red Hat partners on Telco area, to deploy CNF workloads on top of OpenShift. For that the most important technologies used are:
@@ -81,6 +89,9 @@ draft: false
 
 You can find my verified certifications achievements in [Credly](https://www.credly.com/users/daniel-chavero-gaspar) 
 
+* **RHCA** Red Hat Certified Architect (2025)
+* Red Hat Certified Specialist in **OpenShift Advanced Cluster Security** (2025)
+* Red Hat Certified Specialist in **MultiCluster Management** (2025)
 * Red Hat Certified Specialist in **OpenShift AI** (2024)
 * Red Hat Certified Specialist in **Containers** (2024)
 * **RHCE** Red Hat Certified Engineer (2024)
