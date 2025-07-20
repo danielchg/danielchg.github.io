@@ -23,7 +23,7 @@ draft: false
 > * Mentoring to Jr. mates in the team.
 > 
 
-> ##### Senior Software Engineer (August 2021 - Currently) Full Remote Madrid (SPAIN)
+> ##### Senior Software Engineer (August 2021 - November 2024) Full Remote Madrid (SPAIN)
 >
 > Most of the Telco actors are working hard to deploy 5G infrastructure based on cloud native software. I'm currently working on supporting Red Hat partners on Telco area, to deploy CNF workloads on top of OpenShift. For that the most important technologies used are:
 >  * **Red Hat Advanced Cluster Management (ACM)**, used by **Zero Touch Provisioning (ZTP)**, to deploy and manage multiple clusters from a central hub, using **GitOps** methodology.
