@@ -1,2 +1,3 @@
 *.lock
 public/**
+resources/_gen/assets/css/main.scss_*
