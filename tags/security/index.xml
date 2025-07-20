@@ -25,10 +25,6 @@
 &lt;h2 id="introduction">Introduction&lt;/h2>
 &lt;p>When we talk about Cyber Security, there are a lot of aspects to be focused on to keep our services secure, and from the point of view of the platform, during all Internet years, the industry has created some standards in order to keep minimum requirements so that our infrastructure is secure enough to prevent unauthorized access or DoS.&lt;/p></description></item><item><title>Talks</title><link>https://danielchg.github.io/videos/</link><pubDate>Tue, 24 Jan 2023 17:45:23 +0100</pubDate><guid>https://danielchg.github.io/videos/</guid><description>&lt;h3 id="openstack-summit-2014-paris">OpenStack Summit 2014 Paris&lt;/h3>
 &lt;p>I attended as speaker in the OpenStack Summit 2014 in Paris. We talked about how we designed the deployment of OpenStack in the spanish bank BBVA, based on Red Hat OpenStack and Nuage SDN. In the talk I explained the integration of Nuage in the OpenStack, and how we replaced Neutron (you can find it in the minute 20 of the video).&lt;/p>
-
-
- 
- &lt;div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
- &lt;iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="allowfullscreen" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/Pp2TiOKjWLY?autoplay=0&amp;controls=1&amp;end=0&amp;loop=0&amp;mute=0&amp;start=0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" title="YouTube video"
- >&lt;/iframe>
+&lt;div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+ &lt;iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/Pp2TiOKjWLY?autoplay=0&amp;amp;controls=1&amp;amp;end=0&amp;amp;loop=0&amp;amp;mute=0&amp;amp;start=0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" title="YouTube video">&lt;/iframe>
  &lt;/div></description></item></channel></rss>

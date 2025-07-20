@@ -15,4 +15,5 @@
 &lt;/li>
 &lt;/ul>
 &lt;h2 id="introduction">Introduction&lt;/h2>
-&lt;p>&lt;code>tmux&lt;/code> is very useful when you have a remote session on a server via ssh, and you need to open multiple consoles, this avoid to open multiple ssh sessions to the server. Also it is very useful when you are working in pairs with a mate remotely, allowing both to share the same interactive session.&lt;/p></description></item></channel></rss>
+&lt;p>&lt;code>tmux&lt;/code> is very useful when you have a remote session on a server via ssh, and you need to open multiple consoles, this avoid to open multiple ssh sessions to the server. Also it is very useful when you are working in pairs with a mate remotely, allowing both to share the same interactive session.&lt;/p>
+&lt;p>I have used &lt;code>tmux&lt;/code> from time to time, and I always forget all the commands required to create new windows, panes, split current pane, rename window and so on. So here is a &lt;strong>cheatsheet&lt;/strong> of the commands that I usually use on &lt;code>tmux&lt;/code>. I will be updating this if I start to use new commands.&lt;/p></description></item></channel></rss>
