@@ -1,19 +1,19 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Linux on Daniel Ops</title><link>https://danielchg.github.io/tags/linux/</link><description>Recent content in Linux on Daniel Ops</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Tue, 02 Jul 2024 11:16:02 +0200</lastBuildDate><atom:link href="https://danielchg.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml"/><item><title>Tmux Cheatsheet</title><link>https://danielchg.github.io/posts/tmux-cheatsheet/</link><pubDate>Tue, 02 Jul 2024 11:16:02 +0200</pubDate><guid>https://danielchg.github.io/posts/tmux-cheatsheet/</guid><description>&lt;h1 id="table-of-contents">Table of Contents&lt;/h1>
-&lt;ul>
-&lt;li>&lt;a href="#table-of-contents">Table of Contents&lt;/a>
-&lt;ul>
-&lt;li>&lt;a href="#introduction">Introduction&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#cheat-sheet">Cheat sheet&lt;/a>
-&lt;ul>
-&lt;li>&lt;a href="#sessions">Sessions&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#windows">Windows&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#panes">Panes&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#misc">Misc&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;/ul>
-&lt;h2 id="introduction">Introduction&lt;/h2>
-&lt;p>&lt;code>tmux&lt;/code> is very useful when you have a remote session on a server via ssh, and you need to open multiple consoles, this avoid to open multiple ssh sessions to the server. Also it is very useful when you are working in pairs with a mate remotely, allowing both to share the same interactive session.&lt;/p>
-&lt;p>I have used &lt;code>tmux&lt;/code> from time to time, and I always forget all the commands required to create new windows, panes, split current pane, rename window and so on. So here is a &lt;strong>cheatsheet&lt;/strong> of the commands that I usually use on &lt;code>tmux&lt;/code>. I will be updating this if I start to use new commands.&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Linux on Daniel Ops</title><link>https://danielchg.github.io/tags/linux/</link><description>Recent content in Linux on Daniel Ops</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Tue, 02 Jul 2024 11:16:02 +0200</lastBuildDate><atom:link href="https://danielchg.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml"/><item><title>Tmux Cheatsheet</title><link>https://danielchg.github.io/posts/tmux-cheatsheet/</link><pubDate>Tue, 02 Jul 2024 11:16:02 +0200</pubDate><guid>https://danielchg.github.io/posts/tmux-cheatsheet/</guid><description>&lt;h1 id="table-of-contents"&gt;Table of Contents&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="#table-of-contents"&gt;Table of Contents&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="#introduction"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#cheat-sheet"&gt;Cheat sheet&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="#sessions"&gt;Sessions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#windows"&gt;Windows&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#panes"&gt;Panes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#misc"&gt;Misc&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="introduction"&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;tmux&lt;/code&gt; is very useful when you have a remote session on a server via ssh, and you need to open multiple consoles, this avoid to open multiple ssh sessions to the server. Also it is very useful when you are working in pairs with a mate remotely, allowing both to share the same interactive session.&lt;/p&gt;
+&lt;p&gt;I have used &lt;code&gt;tmux&lt;/code&gt; from time to time, and I always forget all the commands required to create new windows, panes, split current pane, rename window and so on. So here is a &lt;strong&gt;cheatsheet&lt;/strong&gt; of the commands that I usually use on &lt;code&gt;tmux&lt;/code&gt;. I will be updating this if I start to use new commands.&lt;/p&gt;</description></item></channel></rss>
