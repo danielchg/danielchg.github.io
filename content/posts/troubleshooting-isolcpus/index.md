@@ -232,7 +232,7 @@ testpmd   1/1     Running   0          5d14h   10.129.2.12   worker3.ocp1.e5gc.b
 2. Get the ContainerId of pod
 
 ```bash
-$oc debug node/htworker3.ocp1.e5gc.bos2.lab
+$oc debug node/worker3.ocp1.e5gc.bos2.lab
 Starting pod/worker3ocp1e5gcbos2lab-debug-vb2t4 ...
 To use host binaries, run `chroot /host`. Instead, if you need to access host namespaces, run `nsenter -a -t 1`.
 Pod IP: 192.168.82.73
@@ -246,18 +246,18 @@ sh-5.1# crictl ps | grep testpmd
 3. Get PID of the container
 
 ```bash
-[root@htworker3 ~]# crictl inspect 3c0e19d3e6964 | jq .info.pid
+[root@worker3 ~]# crictl inspect 3c0e19d3e6964 | jq .info.pid
 2138345
 ```
 
 4. Get CPU pinned
 
 ```bash
-[root@htworker3 ~]# crictl inspect 3c0e19d3e6964 | jq .status.resources.linux.cpusetCpus
+[root@worker3 ~]# crictl inspect 3c0e19d3e6964 | jq .status.resources.linux.cpusetCpus
 "4,6,8,10,12,68,70,72,74,76"
 ```
 
-5. Check if there are task switches associated with given PID. The important thing is to ensure there are no changes in the switches. Only the processes from the pod should be in there and no new task must be scheduled in this core if the pinning is working properly.
+5. Check if there are task switches associated with given PID. The important thing is to ensure there are no changes in the switches. Only the processes from the pod should be in there and no new task must be scheduled.
 
 ```bash
 watch grep switches /proc/2138345/task/2138345/sched
@@ -272,7 +272,7 @@ In case we see new switches we can check which processes are being scheduled in 
 perf top --sort comm,dso -C <CPU> -z
 ```
 
-6. Review the instructions in the pined cores
+6. Review the interruptions in the pined cores
 
 ```bash
 CPUMAX=`cat /proc/cpuinfo | grep processor | tail -n 1 | egrep -o [0-9]*$`
