@@ -13,6 +13,7 @@ draft: false
     - [Configuring reserved/isolated CPUs](#configuring-reservedisolated-cpus)
   - [Deploy testpmd workload](#deploy-testpmd-workload)
   - [Troubleshooting isolated CPUs](#troubleshooting-isolated-cpus)
+  - [Conclusions](#conclusions)
   - [Resources](#resources)
 
 ## Introduction
@@ -141,6 +142,12 @@ lowlatency   rendered-lowlatency-0c3b91cfa6eaa7b559a2eb994cd2c4f1   True      Fa
 
 Now that we have the workers configured with the `PerformanceProfile`, we can deploy a pod to run a DPDK application with CPU pinning. The below pod manifest is an example that deploys a `testpmd` container.
 
+It is important to highlight some aspects of the below Pod manifests:
+
+* In order to allow the scheduler to use the QoS, we have to set the same amount of `limits` and `resources` within the `.spec.containers.resources` .
+* The field `runtimeClassName` must be set with `performance-` plus the name of the `PerformanceProfile`. In this case the value is `performance-lowlatency`.
+* The annotations regarding the irq load balancing is important to ensure the pined CPUs will not run interruptions. 
+
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -148,7 +155,7 @@ metadata:
  annotations:
    k8s.v1.cni.cncf.io/networks: '[
      {
-      "name": "eric-pc-up-data-plane-net1",
+      "name": "net1",
       "namespace": "testpmd"
      }
    ]'
@@ -293,6 +300,23 @@ CPU73: megasas0-msix81
 CPU74: megasas0-msix82                                                                                                                                        
 CPU75: megasas0-msix83               
 ```
+
+## Conclusions
+
+In this article we have explored the essential steps for configuring and troubleshooting CPU isolation for low-latency workloads on OpenShift using the PerformanceProfile custom resource. Proper CPU isolation is critical for achieving deterministic performance in telco and high-performance computing workloads, where even minimal jitter and latency can significantly impact application behavior.
+
+We demonstrated how to configure reserved and isolated CPUs by analyzing the NUMA topology and core distribution, ensuring that system tasks and user workloads are properly segregated. The PerformanceProfile provides a declarative way to apply complex kernel tuning and resource isolation automatically across the cluster nodes, simplifying what would otherwise be a complex manual configuration process.
+
+Through the testpmd deployment example, we showed how to properly configure a DPDK application with CPU pinning and NUMA awareness. The troubleshooting steps outlined - from identifying the worker node and container PID, to monitoring task switches and IRQ affinity - provide a systematic approach to validate that CPU isolation is working as expected.
+
+Key takeaways:
+- Reserve adequate CPUs (including siblings) on both NUMA nodes for system and control plane operations
+- Ensure the sum of reserved and isolated CPUs matches the total CPU count
+- Use CPU pinning annotations and appropriate runtime class for workload pods
+- Monitor task switches to detect unwanted scheduling on isolated cores
+- Verify IRQ affinity to prevent hardware interrupts on isolated CPUs
+
+Mastering these techniques enables you to deploy and maintain high-performance, low-latency workloads on OpenShift with confidence that your CPU isolation configuration is functioning correctly.
 
 ## Resources
 
