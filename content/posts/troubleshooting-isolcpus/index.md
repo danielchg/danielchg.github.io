@@ -94,7 +94,6 @@ metadata:
   name: lowlatency
 spec:
   additionalKernelArgs:
-  - nohz_full='4-63,69-127'
   - nohz_full='2-63,66-127'
   cpu:
     isolated: 2-63,66-127
@@ -137,6 +136,18 @@ NAME      CONFIG                                              UPDATED   UPDATING
 lowlatency   rendered-lowlatency-0c3b91cfa6eaa7b559a2eb994cd2c4f1   True      False      False      3              3                   3                     0                      18d
 
 ```
+
+To confirm the desired changes on each node we can connect to the node and review the content from the `/proc/cmdline` as below. 
+
+```bash
+$ cat /proc/cmdline 
+BOOT_IMAGE=(hd1,gpt3)/boot/ostree/rhcos-8c3bf24904a64029eba126028ab41edc3ba005b7fcc3767bec782d66f156d4e6/vmlinuz-5.14.0-570.86.1.el9_6.x86_64 ignition.platform.id=metal ostree=/ostree/boot.0/rhcos/8c3bf24904a64029eba126028ab41edc3ba005b7fcc3767bec782d66f156d4e6/0 root=UUID=bd77714e-6dc1-442c-934d-5e38adc387bd rw rootflags=prjquota boot=UUID=edb39e3f-fa92-41bb-b515-c886a69a90fc systemd.unified_cgroup_hierarchy=1 cgroup_no_v1=all psi=0 skew_tick=1 tsc=reliable rcupdate.rcu_normal_after_boot=1 rcutree.nohz_full_patience_delay=1000 nohz=on rcu_nocbs=2-63,66-127 tuned.non_isolcpus=0000001f,00000000,0000000f systemd.cpu_affinity=0,1,64,65 intel_iommu=on iommu=pt isolcpus=managed_irq,4-63,69-127 default_hugepagesz=1G intel_pstate=passive nohz_full=2-63,66-127
+```
+
+We can see in the above output :
+* `systemd.cpu_affinity=0,1,64,65` for the reserved CPUs
+* `isolcpus=managed_irq,4-63,69-127` for the isolated CPUs
+* `nohz_full=2-63,66-127` to ensure the isolated CPUs are not going to run any interruption.
 
 ## Deploy testpmd workload 
 
