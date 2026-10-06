@@ -134,6 +134,12 @@ Note this URL — it will be used later when configuring the KMS connection deta
 
 ### Create the Vault Secret Backend for ODF
 
+The remaining Vault CLI commands in this section must be run from inside the `vault-0` pod. Open a shell into it first:
+
+```bash
+oc -n vault rsh vault-0
+```
+
 Enable a KV v2 secrets engine at the path `odf`. This is where Ceph CSI will store the per-volume encryption keys:
 
 ```bash
@@ -264,10 +270,13 @@ OCP_HOST=$(oc config view --minify --flatten \
   -o jsonpath="{.clusters[0].cluster.server}")
 ```
 
-Then configure Vault (from the HUB cluster, inside a Vault pod, or using the Vault CLI with the root token) to enable Kubernetes auth and register the Spoke cluster:
+Then open a shell into the `vault-0` pod on the HUB cluster and run the following commands. If the environment variables set in the previous step are not available inside the pod, replace them with the literal values obtained earlier:
 
 ```bash
-# From Vault — if env variables are not available, replace them with the values above
+oc -n vault rsh vault-0
+```
+
+```bash
 vault auth enable kubernetes
 
 vault write auth/kubernetes/config \
