@@ -22,6 +22,7 @@ draft: false
     - [Configure KMS Connectivity for ODF](#configure-kms-connectivity-for-odf)
     - [Configure Vault Kubernetes Authentication](#configure-vault-kubernetes-authentication)
     - [Create the Encrypted StorageClass](#create-the-encrypted-storageclass)
+    - [Enable key rotation](#enable-key-rotation)
   - [Test the Encryption](#test-the-encryption)
   - [Conclusions](#conclusions)
   - [References](#references)
@@ -140,6 +141,12 @@ The remaining Vault CLI commands in this section must be run from inside the `va
 oc -n vault rsh vault-0
 ```
 
+Logging in Vault with the below command, using the token from the output when the Vault initialize was run:
+
+```bash
+vault login
+```
+
 Enable a KV v2 secrets engine at the path `odf`. This is where Ceph CSI will store the per-volume encryption keys:
 
 ```bash
@@ -217,6 +224,21 @@ roleRef:
 EOF
 ```
 
+Once the service account is created we need to create the token for that service account:
+
+```bash
+cat <<EOF | oc create -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rbd-csi-vault-token-review-token
+  namespace: openshift-storage
+  annotations:
+    kubernetes.io/service-account.name: "rbd-csi-vault-token-review"
+type: kubernetes.io/service-account-token
+data: {}
+EOF
+```
 ### Configure KMS Connectivity for ODF
 
 Edit the `csi-kms-connection-details` ConfigMap in the `openshift-storage` namespace to point the CSI driver at the Vault instance on the HUB cluster. The key `vault-tenant-sa` is the KMS identifier that will be referenced later by the StorageClass:
@@ -325,6 +347,14 @@ volumeBindingMode: Immediate
 allowVolumeExpansion: true
 ```
 
+### Enable key rotation
+
+As an additional security improvement for this scenario, we are going to enable the encryption key rotation in a daily basis. For that we just need to apply the below annotation on the storageClass:
+
+```bash
+oc annotate storageclass ocs-external-storagecluster-ceph-rbd-encrypted "keyrotation.csiaddons.openshift.io/schedule=@daily"
+```
+
 ## Test the Encryption
 
 Deploy a PVC using the new encrypted StorageClass and a test pod to confirm the end-to-end flow works correctly:
@@ -376,9 +406,26 @@ app-using-encrypted-pvc   1/1     Running   0          ...
 
 If the PVC binds successfully and the pod reaches `Running` state, the encryption setup is working correctly. You can also verify in Vault that a new key has been created under the `odf` secrets engine path.
 
+We can open an interactive shell in the pod to confirm that the mount point `/data` is mounted as a LUKS filesystem:
+
+```bash
+$oc rsh app-using-encrypted-pvc-59988b9497-nq8ts
+sh-4.4# df
+Filesystem                                                                                              1K-blocks     Used  Available Use% Mounted on
+overlay                                                                                                 307050000 13749692  293300308   5% /
+tmpfs                                                                                                       65536        0      65536   0% /dev
+shm                                                                                                         65536        0      65536   0% /dev/shm
+tmpfs                                                                                                   211263068   100220  211162848   1% /proc/acpi
+/dev/mapper/luks-rbd-0001-0011-openshift-storage-0000000000000004-365a1c2f-8ce7-4196-b46f-60af03b4cc12    5058432       24    5042024   1% /data
+/dev/sdb6                                                                                                51134464   505500   50628964   1% /etc/hosts
+tmpfs                                                                                                  1027901380       20 1027901360   1% /run/secrets/kubernetes.io/serviceaccount
+devtmpfs                                                                                                     4096        0       4096   0% /proc/keys
+
+```
+
 ## Conclusions
 
-This configuration allows centralising encryption key management for ODF PVs across multiple Spoke clusters using a single Vault instance running on the HUB cluster. The Kubernetes auth method in Vault provides a clean, token-based authentication flow without needing to distribute static credentials to each Spoke cluster.
+This configuration allows centralizing encryption key management for ODF PVs across multiple Spoke clusters using a single Vault instance running on the HUB cluster. The Kubernetes auth method in Vault provides a clean, token-based authentication flow without needing to distribute static credentials to each Spoke cluster.
 
 Key takeaways:
 
