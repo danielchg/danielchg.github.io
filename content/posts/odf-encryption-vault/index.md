@@ -355,6 +355,15 @@ As an additional security improvement for this scenario, we are going to enable 
 oc annotate storageclass ocs-external-storagecluster-ceph-rbd-encrypted "keyrotation.csiaddons.openshift.io/schedule=@daily"
 ```
 
+We can check that the rotation has been configured properly by querying the `encryptionkeyrotationcronjobs` CR as below:
+
+```bash
+$oc get encryptionkeyrotationcronjobs.csiaddons.openshift.io
+NAME                           SCHEDULE   SUSPEND   ACTIVE   LASTSCHEDULE   AGE
+encrypted-rbd-pvc-1792499676   @daily                                       6m12s
+
+```
+
 ## Test the Encryption
 
 Deploy a PVC using the new encrypted StorageClass and a test pod to confirm the end-to-end flow works correctly:
